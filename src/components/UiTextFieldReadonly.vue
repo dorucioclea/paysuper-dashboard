@@ -26,7 +26,7 @@ export default {
       type: [String, Number],
     },
     isTextOverflowHidden: {
-      default: true,
+      default: false,
       type: Boolean,
     },
   },
