@@ -255,8 +255,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.productsList);
-
     if (!this.isNewItem) {
       this.productsItems = this.productsList;
       this.createLink.name = this.linkItem.name;
@@ -394,6 +392,7 @@ export default {
             :options="projectsOptions"
             :value="createLink.projectId"
             v-model="createLink.projectId"
+            :disabled="!isNewItem"
           />
         </section>
         <section class="section" v-if="createLink.projectId !== null">

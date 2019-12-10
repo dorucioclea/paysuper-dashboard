@@ -1,4 +1,4 @@
-﻿<script>
+<script>
 import { get, find, merge } from 'lodash-es';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
@@ -32,7 +32,11 @@ export default {
       default: 'USD',
       type: String,
     },
-    data: {
+    countryData: {
+      default: () => ({}),
+      type: Object,
+    },
+    referrerData: {
       default: () => ({}),
       type: Object,
     },
@@ -41,9 +45,7 @@ export default {
     countriesOptions() {
       return merge(
         getBarchartOptionsByType('basePaymentLink'),
-        {
-          scales: { xAxes: [{ time: { ...this.chartPeriod } }] },
-        },
+        { scales: { xAxes: [{ time: { ...this.chartPeriod } }] } },
       );
     },
     referrersOptions() {
@@ -72,18 +74,18 @@ export default {
       <div class="basic-item">
         <Barchart
           type="doughnut"
-          v-if="get(data, 'revenue_by_country.hasChart')"
+          v-if="get(countryData, 'hasChart')"
           class="chart"
-          :data="get(data, 'revenue_by_country.chart')"
+          :data="get(countryData, 'chart')"
           :options="countriesOptions"
         />
         <div class="basic-title">Top countries</div>
         <div
-          v-if="get(data, 'revenue_by_country.top')"
+          v-if="get(countryData, 'top')"
           class="top"
         >
           <div
-            v-for="(item, index) in get(data, 'revenue_by_country.top')"
+            v-for="(item, index) in get(countryData, 'top')"
             :key="index"
             class="top-item"
           >
@@ -91,10 +93,10 @@ export default {
               <span class="status-dot"
                 :style="{ 'background-color': getColor(index) }"
               />
-              <span class="text">{{ getCountryByCode(item.country) }}</span>
+              <span class="text">{{ getCountryByCode(item.country_code) }}</span>
             </div>
             <div class="amount">
-              {{ $formatPrice(item.amount, currency) }}
+              {{ $formatPrice(item.gross_total_amount, currency) }}
             </div>
           </div>
         </div>
@@ -102,18 +104,18 @@ export default {
       <div class="basic-item">
         <Barchart
           type="doughnut"
-          v-if="get(data, 'sources.hasChart')"
+          v-if="get(referrerData, 'hasChart')"
           class="chart"
-          :data="get(data, 'sources.chart')"
+          :data="get(referrerData, 'chart')"
           :options="referrersOptions"
         />
         <div class="basic-title">Best referrers</div>
         <div
-          v-if="get(data, 'sources.top')"
+          v-if="get(referrerData, 'top')"
           class="top"
         >
           <div
-            v-for="(item, index) in get(data, 'sources.top')"
+            v-for="(item, index) in get(referrerData, 'top')"
             :key="index"
             class="top-item"
           >
@@ -121,9 +123,9 @@ export default {
               <span class="status-dot"
                :style="{ 'background-color': getColor(index) }"
               />
-              <span class="text">{{ item.name }}</span>
+              <span class="text">{{ item.referrer_host }}</span>
             </div>
-            <div class="amount">{{ item.count }}</div>
+            <div class="amount">{{ item.sales_count }}</div>
           </div>
         </div>
       </div>

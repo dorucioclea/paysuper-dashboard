@@ -1,4 +1,4 @@
-﻿const filters = {
+const filters = {
   dateFrom: {
     defaultValue: null,
     apiQueryName: 'period_from',

@@ -1,4 +1,4 @@
-﻿<script>
+<script>
 import { merge } from 'lodash-es';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
@@ -25,7 +25,7 @@ export default {
       return merge(
         getBarchartOptionsByType('summary'),
         {
-          scales: { xAxes: [{ time: {...this.chartPeriod } }] },
+          scales: { xAxes: [{ time: { ...this.chartPeriod } }] },
           tooltips: { callbacks: { label: ({ yLabel }) => `${yLabel} ${this.currency}` } },
         },
       );

@@ -1,0 +1,180 @@
+﻿{
+  "top": [
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 3,
+      "sales_count": 1,
+      "returns_count": 2,
+      "gross_sales_amount": 88.977538,
+      "gross_returns_amount": 45.378545,
+      "gross_total_amount": 43.598993,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "yandex",
+        "utm_medium": "cpc",
+        "utm_campaign": "45249456456"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google1",
+        "utm_campaign": "dfsdf2"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google3",
+        "utm_campaign": "dfsdf2"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google1",
+        "utm_campaign": "dfsdf21"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google1",
+        "utm_campaign": "dfsdf"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google2",
+        "utm_campaign": "dfsdf"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 2,
+      "sales_count": 2,
+      "returns_count": 0,
+      "gross_sales_amount": 88.52677,
+      "gross_returns_amount": 0,
+      "gross_total_amount": 88.52677,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "google",
+        "utm_medium": "google2",
+        "utm_campaign": "dfsdf1"
+      }
+    },
+    {
+      "paylink_id": "5dee2f5480e52e45359b656f",
+      "visits": 0,
+      "total_transactions": 3,
+      "sales_count": 1,
+      "returns_count": 2,
+      "gross_sales_amount": 88.977538,
+      "gross_returns_amount": 45.378545,
+      "gross_total_amount": 43.598993,
+      "transactions_currency": "USD",
+      "conversion": 0,
+      "country_code": "",
+      "date": "",
+      "referrer_host": "",
+      "utm": {
+        "utm_source": "yandex",
+        "utm_medium": "cpc",
+        "utm_campaign": "45249779"
+      }
+    }
+  ],
+  "total": {
+    "paylink_id": "5dee2f5480e52e45359b656f",
+    "visits": 0,
+    "total_transactions": 5,
+    "sales_count": 3,
+    "returns_count": 2,
+    "gross_sales_amount": 177.504308,
+    "gross_returns_amount": 45.378545,
+    "gross_total_amount": 132.125763,
+    "transactions_currency": "USD",
+    "conversion": 0,
+    "country_code": "",
+    "date": "",
+    "referrer_host": "",
+    "utm": null
+  }
+}

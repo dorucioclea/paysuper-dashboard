@@ -1,4 +1,4 @@
-﻿<script>
+<script>
 export default {
   name: 'ChartsHeaderPaymentLink',
   data() {
@@ -34,7 +34,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.filters);
     this.dateFilters = this.filters;
   },
 };

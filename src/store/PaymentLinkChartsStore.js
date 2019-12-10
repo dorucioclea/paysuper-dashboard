@@ -18,8 +18,7 @@ import {
 } from 'date-fns';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import paymentLinkChartsFilterScheme from '@/schemes/paymentLinkChartsFilterScheme';
-import json from '../paylink-data.json';
-import jsonBase from '../paylink-base-data.json';
+import jsonUtm from '../paylink-utm-data.json';
 
 const searchBuilder = new SearchBuilder(paymentLinkChartsFilterScheme);
 
@@ -140,6 +139,7 @@ export default function createPaymentLinkChartsStore() {
         await dispatch('fetchChart', 'referrer');
         await dispatch('fetchChart', 'date');
         await dispatch('fetchChart', 'utm');
+        await dispatch('fetchLastPayments');
       },
       async fetchChart({
         commit,
@@ -154,24 +154,21 @@ export default function createPaymentLinkChartsStore() {
 
         const { apiUrl } = rootState.config;
         const period = state.mainPeriod;
-        // const queryString = qs.stringify({ period });
         const query = qs.stringify({
           dateFrom: period.min,
           dateTo: period.max,
         }, { arrayFormat: 'brackets' });
 
-        let response = await axios.get(
+        const response = await axios.get(
           `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`,
         );
 
-        if (response.data && response.data.top && response.data.top !== null) {
+        if (response.data && response.data.top && response.data.top !== null && type !== 'utm') {
           commit(type, response.data);
-        } else {
-          if (type === 'summary') {
-            commit(type, json);
-          } else {
-            commit('base', jsonBase);
-          }
+        }
+
+        if (type === 'utm') {
+          commit(type, jsonUtm);
         }
       },
       async changePeriod({ commit, dispatch }, { period }) {
@@ -182,6 +179,7 @@ export default function createPaymentLinkChartsStore() {
         await dispatch('fetchChart', 'referrer');
         await dispatch('fetchChart', 'date');
         await dispatch('fetchChart', 'utm');
+        await dispatch('fetchLastPayments');
 
         localStorage.setItem('main_PERIOD', JSON.stringify(period));
       },
@@ -201,7 +199,7 @@ export default function createPaymentLinkChartsStore() {
         }, { arrayFormat: 'brackets' });
 
         const response = await axios.get(
-          `${apiUrl}/admin/api/paylinks/{id}/dashboard/country?${queryString}`,
+          `${apiUrl}/admin/api/v1/order?${queryString}`,
         );
 
         if (response.data) {

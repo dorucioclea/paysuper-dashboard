@@ -4,7 +4,7 @@ import { get, map, reduce } from 'lodash-es';
 import PaymentLinkChartsHeader from '@/components/PaymentLinkChartsHeader.vue';
 import ChartsPaylinkSummary from '@/components/ChartsPaylinkSummary.vue';
 import ChartsPaylinkBase from '@/components/ChartsPaylinkBase.vue';
-import ChartsLastPayments from '@/components/ChartsLastPayments.vue';
+import ChartsPaylinkUtm from '@/components/ChartsPaylinkUtm.vue';
 
 const COLORS = [
   '#F44336',
@@ -25,7 +25,7 @@ export default {
     PaymentLinkChartsHeader,
     ChartsPaylinkSummary,
     ChartsPaylinkBase,
-    ChartsLastPayments,
+    ChartsPaylinkUtm,
   },
   data() {
     return {
@@ -40,10 +40,11 @@ export default {
   },
   computed: {
     ...mapState('PaymentLinkCharts', [
-      'base',
-      'main',
+      'date',
+      'country',
+      'referrer',
+      'utm',
       'summary',
-      'basePeriod',
       'mainPeriod',
       'lastPayments',
       'currency',
@@ -70,21 +71,14 @@ export default {
         vat: '#ea3d2f',
       };
     },
-    baseLastBarColor() {
-      return {
-        summary_by_country: '#3d7bf5',
-        sales_today: '#f3aa18',
-        sources: '#2fa84f',
-      };
-    },
-    summaryData() {
-      if (!this.summary) {
+    dateData() {
+      if (!this.date) {
         return [];
       }
 
-      const summary = reduce(this.summary.top, (res, item) => {
-        res.labels.push(item.label);
-        res.data.push(item.amount);
+      const summary = reduce(this.date.top, (res, item) => {
+        res.labels.push(item.date);
+        res.data.push(item.gross_total_amount);
 
         return res;
       }, { labels: [], data: [] });
@@ -110,44 +104,14 @@ export default {
         }],
       };
     },
-    baseData() {
-      return this.getData('base');
+    countryData() {
+      return this.getData('country');
     },
-    getData() {
-      return type => reduce(this[type], (res, item, key) => {
-        const chart = reduce(item.top, (result, chartItem) => {
-          result.labels.push(chartItem.country || chartItem.name);
-          result.data.push(chartItem.count || chartItem.amount);
-
-          return result;
-        }, { labels: [], data: [] });
-
-        const colors = {
-          backgroundColor: map(chart.data, (chartItem, index) => {
-            return COLORS[index];
-          }),
-          hoverBackgroundColor: map(chart.data, (chartItem, index) => {
-            return COLORS[index];
-          }),
-        };
-
-        return {
-          ...res,
-          [key]: {
-            hasTop: Boolean((item.top || []).length),
-            top: item.top || undefined,
-            hasChart: Boolean(chart.labels.length),
-            chart: {
-              labels: chart.labels,
-              datasets: [{
-                label: '',
-                ...colors,
-                data: chart.data,
-              }],
-            },
-          },
-        };
-      }, {});
+    referrerData() {
+      return this.getData('referrer');
+    },
+    utmData() {
+      return this.getData('utm');
     },
   },
   methods: {
@@ -172,6 +136,37 @@ export default {
       await this.fetchChart('utm').catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },
+
+    getData(type) {
+      if (!this[type]) {
+        return [];
+      }
+
+      const chart = reduce(this[type].top, (result, chartItem) => {
+        result.labels.push(chartItem.country_code || chartItem.referrer_host);
+        result.data.push(chartItem.gross_total_amount);
+        return result;
+      }, { labels: [], data: [] });
+
+      const colors = {
+        backgroundColor: map(chart.data, (chartItem, index) => COLORS[index]),
+        hoverBackgroundColor: map(chart.data, (chartItem, index) => COLORS[index]),
+      };
+
+      return {
+        hasTop: Boolean((this[type].top || []).length),
+        top: this[type].top || undefined,
+        hasChart: Boolean(chart.labels.length),
+        chart: {
+          labels: chart.labels,
+          datasets: [{
+            label: '',
+            ...colors,
+            data: chart.data,
+          }],
+        },
+      };
+    },
   },
 
   created() {
@@ -193,21 +188,21 @@ export default {
   <ChartsPaylinkSummary
     :chartPeriod="mainChartPeriod"
     :currency="currency"
-    :data="summaryData"
+    :data="dateData"
   />
 
   <ChartsPaylinkBase
     :chartPeriod="mainChartPeriod"
     :countries="countries"
     :currency="currency"
-    :data="baseData"
+    :countryData="countryData"
+    :referrerData="referrerData"
   />
 
-  <ChartsLastPayments
+  <ChartsPaylinkUtm
     :countries="countries"
     :currency="currency"
-    :lastPayments="lastPayments"
-    @fetchLastPayments="fetchLastPayments"
+    :utmData="utmData"
   />
 </div>
 </template>
