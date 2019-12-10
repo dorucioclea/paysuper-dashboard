@@ -35,6 +35,10 @@ export default {
       required: true,
       type: Array,
     },
+    hasChanged: {
+      default: false,
+      type: Boolean,
+    },
   },
   computed: {
     regions() {
@@ -85,6 +89,7 @@ export default {
       <MerchantAdminChannelCostsTable
         :channelCosts="channelCosts"
         :countries="countries"
+        @changeCell="$emit('updateChannelCost', $event)"
       />
     </section>
 
@@ -97,6 +102,7 @@ export default {
       <MerchantAdminRefundCostsTable
         :refundCosts="refundCosts"
         :countries="countries"
+        @changeCell="$emit('updateRefundCost', $event)"
       />
     </section>
 
@@ -109,6 +115,7 @@ export default {
       <MerchantAdminChargebackTable
         :chargeback="chargeback"
         :countries="countries"
+        @changeCell="$emit('updateChargeback', $event)"
       />
     </section>
 
@@ -116,7 +123,7 @@ export default {
       <UiButton
         class="submit-button"
         text="SAVE"
-        :disabled="true"
+        :disabled="!hasChanged"
         @click="$emit('submitForms')"
       />
     </div>

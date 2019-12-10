@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { get } from 'lodash-es';
 import MerchantTariffStore from '@/store/MerchantTariffStore';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
@@ -17,11 +17,11 @@ export default {
       merchantId,
     );
   },
-
   computed: {
     ...mapState('Merchant', ['merchant']),
     ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('MerchantTariff', ['hasChanged']),
 
     homeRegion() {
       return get(this.merchant, 'tariff.home_region') || 'europe';
@@ -29,6 +29,14 @@ export default {
     payoutCurrency() {
       return get(this.merchant, 'banking.currency') || 'USD';
     },
+  },
+  methods: {
+    ...mapActions('MerchantTariff', [
+      'updateChannelCost',
+      'updateRefundCost',
+      'updateChargeback',
+      'save',
+    ]),
   },
 };
 </script>
@@ -51,6 +59,11 @@ export default {
     :chargeback="chargeback"
     :refundCosts="refundCosts"
     :countries="countries"
+    :hasChanged="hasChanged"
+    @updateChannelCost="updateChannelCost"
+    @updateRefundCost="updateRefundCost"
+    @updateChargeback="updateChargeback"
+    @submitForms="save"
   />
 </div>
 </template>

@@ -96,8 +96,10 @@ export default {
             Chargeback
           </ExpandableCellText>
         </UiComplexTableCell>
-        <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
-        <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
+        <UiComplexTableCell class="cell _currency">
+          {{ data.payoutCurrencySymbol }}
+        </UiComplexTableCell>
+        <UiComplexTableCell class="cell _region">{{ data.regionAbbr }}</UiComplexTableCell>
         <UiComplexTableCell
           class="cell _fee"
           v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
@@ -106,7 +108,7 @@ export default {
           @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
           mask="NNNNNN"
         >
-          {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrency) }}
+          {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrencySymbol) }}
         </UiComplexTableCell>
         <UiComplexTableCell
           class="cell _payout-party"
