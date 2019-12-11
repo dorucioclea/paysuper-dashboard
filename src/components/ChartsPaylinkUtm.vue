@@ -1,6 +1,6 @@
 <script>
 import {
-  get, find, filter, sortBy, groupBy,
+  get, find, filter, sortBy,
 } from 'lodash-es';
 
 export default {
@@ -30,10 +30,6 @@ export default {
     utmDataOrdered() {
       const arr = this.utmData.top;
       return sortBy(arr, ['utm.utm_source', 'utm.utm_medium', 'utm_campaign']);
-    },
-    utmDataGrouped() {
-      const arr = this.utmDataOrdered;
-      return console.log(groupBy(arr, ['utm.utm_source', 'utm.utm_medium', 'utm_campaign']));
     },
   },
   methods: {
@@ -126,7 +122,6 @@ export default {
       }
     });
 
-    console.log(source);
     this.sourceList = source;
   },
 };
