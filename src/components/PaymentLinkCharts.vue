@@ -189,6 +189,7 @@ export default {
     :chartPeriod="mainChartPeriod"
     :currency="currency"
     :data="dateData"
+    v-if="dateData.top"
   />
 
   <ChartsPaylinkBase
@@ -197,12 +198,14 @@ export default {
     :currency="currency"
     :countryData="countryData"
     :referrerData="referrerData"
+    v-if="countryData.top || referrerData.top"
   />
 
   <ChartsPaylinkUtm
     :countries="countries"
     :currency="currency"
     :utmData="utmData"
+    v-if="utmData.top"
   />
 </div>
 </template>

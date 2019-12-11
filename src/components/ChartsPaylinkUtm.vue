@@ -108,6 +108,7 @@ export default {
                 conversion: conversionM,
                 amount: amountM,
               },
+              expand: false,
             });
           }
         });
@@ -120,6 +121,7 @@ export default {
             amount,
           },
           medium: mediumArr,
+          expand: false,
         };
       }
     });
@@ -140,7 +142,7 @@ export default {
     <UiScrollbarBox class="scrollbox">
       <UiTable class="table">
         <UiTableRow :isHead="true">
-          <UiTableCell align="left">UTM Source</UiTableCell>
+          <UiTableCell align="left" class="cell-utm">UTM Source</UiTableCell>
           <UiTableCell align="left">Clicks</UiTableCell>
           <UiTableCell align="left">Payments</UiTableCell>
           <UiTableCell align="left">Conversion</UiTableCell>
@@ -150,7 +152,13 @@ export default {
           v-for="(item, index) in sourceList"
         >
           <UiTableRow :key="index">
-            <UiTableCell align="left">
+            <UiTableCell align="left"
+              class="cell-utm"
+              >
+              <span class="expand">
+                <IconPlusTree v-if="!item.expand" @click.native="sourceList[index].expand = true"/>
+                <IconMinusTree v-if="item.expand" @click.native="sourceList[index].expand = false"/>
+              </span>
               {{ item.source }}
             </UiTableCell>
             <UiTableCell align="left">
@@ -166,14 +174,20 @@ export default {
               {{ $formatPrice(item.data.amount, currency) }}
             </UiTableCell>
           </UiTableRow>
-          <template v-if="item.medium && item.medium.length > 0">
+          <template v-if="item.medium && item.medium.length > 0 && item.expand">
             <template v-for="(medium, indexM) in item.medium">
               <UiTableRow
-                class="row"
-                :key="indexM"
+                class="row row_c"
+                :key="`${indexM}${index}`"
               >
-                <UiTableCell align="left">
+                <UiTableCell align="left"
+                  class="cell-utm"
+                >
                   <span class="medium">
+                    <span class="expand">
+                      <IconPlusTree v-if="!medium.expand" @click.native="medium.expand = true"/>
+                      <IconMinusTree v-if="medium.expand" @click.native="medium.expand = false"/>
+                    </span>
                     {{ medium.medium }}
                   </span>
                 </UiTableCell>
@@ -190,12 +204,15 @@ export default {
                   {{ $formatPrice(medium.data.amount, currency) }}
                 </UiTableCell>
               </UiTableRow>
-              <template v-if="medium.campaign && medium.campaign.length > 0">
+              <template v-if="medium.campaign && medium.campaign.length > 0 && medium.expand">
                 <UiTableRow
+                  class="row_c"
                   v-for="(campaign, indexC) in medium.campaign"
-                  :key="indexC"
+                  :key="`${indexC}${indexM}${index}`"
                 >
-                  <UiTableCell align="left">
+                  <UiTableCell align="left"
+                    class="cell-utm"
+                  >
                     <span class="campaign">
                       {{ campaign.utm.utm_campaign }}
                     </span>
@@ -241,7 +258,6 @@ export default {
   margin-bottom: 16px;
   flex-wrap: wrap;
   height: 570px;
-  padding: 24px;
   overflow: hidden;
 }
 .box-header {
@@ -275,5 +291,17 @@ export default {
 }
 .campaign {
   padding-left: 63px;
+}
+.row_c {
+  background-color: #F7F9FA;
+}
+.expand {
+  position: relative;
+  top: 2px;
+  padding-right: 8px;
+  cursor: pointer;
+}
+.cell-utm {
+  width: 290px;
 }
 </style>

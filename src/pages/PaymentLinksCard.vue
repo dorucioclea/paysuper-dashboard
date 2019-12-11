@@ -44,6 +44,7 @@ export default {
       noExpirationDate: false,
       isSelectProductsModalOpened: false,
       isDeleteModalOpened: false,
+      productIdForAction: null,
       productsItems: [],
       productsItemsSelected: [],
       productsTypes: [
@@ -145,7 +146,8 @@ export default {
       this.createLink.dateInput = value;
     },
 
-    requestDeleteProductModal() {
+    requestDeleteProductModal(index) {
+      this.productIdForAction = index;
       this.isSelectProductsModalOpened = false;
       this.isDeleteModalOpened = true;
     },
@@ -168,8 +170,9 @@ export default {
       this.isSelectProductsModalOpened = true;
     },
 
-    deleteProductInList(index) {
-      this.productsItems.splice(index, 1);
+    deleteProductInList() {
+      this.productsItems.splice(this.productIdForAction, 1);
+      this.isDeleteModalOpened = false;
     },
 
     getItemPrice(item) {
@@ -400,9 +403,8 @@ export default {
             Products
           </UiHeader>
           <div class="section__info">
-            Do aliquip labore dolor irure cillum deserunt nulla.
-            Anim do qui et qui esse qui ex eu. Adipisicing dolor
-            ea proident nostrud sint consequat consectetur up to 8 products.
+            Select a set of <b>max. 8 products</b> of the same type you want
+            <div>to add to a current payment link.</div>
           </div>
           <div class="controls">
             <UiButton
@@ -507,7 +509,7 @@ export default {
                     <UiNoText v-if="!item.platforms" />
                   </UiTableCell>
                   <UiTableCell width="40px" align="center" valign="middle">
-                    <span class="delete" @click="deleteProductInList(index)">
+                    <span class="delete" @click="requestDeleteProductModal(index)">
                       <IconDelete/>
                     </span>
                   </UiTableCell>
@@ -537,9 +539,9 @@ export default {
       title="Delete product"
       closeButtonText="Cancel"
       @close="isDeleteModalOpened = false"
-      @submit="deleteProduct"
+      @submit="deleteProductInList"
     >
-      Do aliquip labore dolor irure cillum deserunt nulla. Anim do qui et qui esse #product-name.
+      Are you sure you want to delete the product from this payment link set?
     </UiDeleteModal>
 
     <SelectProductsModal
@@ -591,6 +593,9 @@ export default {
     }
     &__info {
       width: 420px;
+      b {
+        font-weight: 500;
+      }
     }
   }
   .controls {

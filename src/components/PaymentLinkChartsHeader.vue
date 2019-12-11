@@ -77,6 +77,7 @@ export default {
   letter-spacing: 0.25px;
   color: #000;
   padding-right: 16px;
+  font-weight: 500;
 }
 .controls {
   display: flex;

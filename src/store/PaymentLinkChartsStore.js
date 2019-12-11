@@ -18,7 +18,6 @@ import {
 } from 'date-fns';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import paymentLinkChartsFilterScheme from '@/schemes/paymentLinkChartsFilterScheme';
-import jsonUtm from '../paylink-utm-data.json';
 
 const searchBuilder = new SearchBuilder(paymentLinkChartsFilterScheme);
 
@@ -163,12 +162,8 @@ export default function createPaymentLinkChartsStore() {
           `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`,
         );
 
-        if (response.data && response.data.top && response.data.top !== null && type !== 'utm') {
+        if (response.data && response.data.top && response.data.top !== null) {
           commit(type, response.data);
-        }
-
-        if (type === 'utm') {
-          commit(type, jsonUtm);
         }
       },
       async changePeriod({ commit, dispatch }, { period }) {

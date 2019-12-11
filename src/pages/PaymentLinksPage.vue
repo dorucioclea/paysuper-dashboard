@@ -9,6 +9,7 @@ import moment from 'moment';
 import paymentLinksStatusScheme from '@/schemes/paymentLinksStatusScheme';
 import PaymentLinksListStore from '@/store/PaymentLinksListStore';
 import NoResults from '@/components/NoResults.vue';
+import PictureWebLines from '@/components/PictureWebLines.vue';
 
 
 const STATUS_COLOR = {
@@ -25,6 +26,7 @@ export default {
   name: 'PaymentLinksPage',
 
   components: {
+    PictureWebLines,
     NoResults,
   },
 
@@ -43,6 +45,8 @@ export default {
       filters: {},
       scheme: paymentLinksStatusScheme,
       openedLinkId: null,
+      isDeleteModalOpened: false,
+      linkIdForAction: null,
     };
   },
 
@@ -149,10 +153,6 @@ export default {
       return moment.unix(date).format('D MMM YYYY, HH:MM');
     },
 
-    deletePaymentLink(id) {
-      this.deleteLink(id);
-    },
-
     goToItemPage(link) {
       this.setIsLoading(true);
       this.$router.push({
@@ -167,21 +167,38 @@ export default {
         params: { linkId: 'new' },
       });
     },
+
+    openDeleteDialog(linkId) {
+      this.isDeleteModalOpened = true;
+      this.linkIdForAction = linkId;
+    },
+
+    async tryToDeleteLink() {
+      this.setIsLoading(true);
+      try {
+        await this.deleteLink(this.linkIdForAction);
+        this.$showSuccessMessage('Link has been delete');
+      } catch (error) {
+        this.$showErrorMessage(error);
+      }
+      this.setIsLoading(false);
+      this.isDeleteModalOpened = false;
+    },
   },
 };
 </script>
 
 <template>
   <div>
-    <UiPageHeaderFrame>
+    <UiPageHeaderFrame class="picture">
       <template slot="title">
         Payment links
       </template>
       <span slot="description">
-        Do aliquip labore dolor irure cillum deserunt nulla.
-        Anim do qui et qui esse qui ex eu. Adipisicing dolor ea proident
-        nostrud sint consequat consectetur dolor irure cillum deserunt.
+        Here you can create special payment links, that can be
+        placed on any web page and sell your goods to customers by simple click.
       </span>
+      <PictureWebLines slot="picture" />
     </UiPageHeaderFrame>
 
     <UiPanel>
@@ -271,7 +288,7 @@ export default {
                   <UiTooltipMenuItem
                     class="dots-menu__item"
                     iconComponent="IconDelete"
-                    @click.stop.prevent="deletePaymentLink(link.id)"
+                    @click.stop.prevent="openDeleteDialog(link.id)"
                   >
                     Delete
                   </UiTooltipMenuItem>
@@ -284,6 +301,16 @@ export default {
         <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
       </div>
     </UiPanel>
+
+    <UiDeleteModal
+      v-if="isDeleteModalOpened"
+      title="Delete"
+      submitButtonText="Delete"
+      @close="isDeleteModalOpened = false"
+      @submit="tryToDeleteLink"
+    >
+      You can delete the link, if you want to stop all activities in it.
+    </UiDeleteModal>
 
   </div>
 </template>
@@ -376,6 +403,14 @@ export default {
 
   &.transparent {
     border: 1px solid #919699;
+  }
+}
+
+.picture {
+  justify-content: space-between;
+  /deep/
+  .header-picture {
+    flex-grow: 0;
   }
 }
 </style>
