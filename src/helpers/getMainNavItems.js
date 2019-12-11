@@ -31,7 +31,8 @@ export default function getMainNavItems(permissions, {
       link: '/payment-links',
       title: 'Payment links',
       routeNames: ['PaymentLinksPage'],
-      isAvailable: true,
+      isAvailable: permissions.viewProjects && hasDefaultCurrency,
+      isHidden: hideToAdmin
     },
     {
       additional: 'Weekly royalty reports',
