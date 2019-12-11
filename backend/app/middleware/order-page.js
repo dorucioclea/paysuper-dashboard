@@ -29,6 +29,6 @@ module.exports = async function orderPage(ctx) {
   }
 
   return renderOrder({
-    formUrl: formUrl.replace('%v', 'v0.21.0'),
+    formUrl: formUrl.replace('%v', 'latest'),
   });
 };

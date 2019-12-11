@@ -34,7 +34,6 @@
     "file-saver": "^2.0.2",
     "fs": "0.0.1-security",
     "handlebars": "^4.0.3",
-    "hellosign-embedded": "^2.5.0",
     "iban": "^0.0.12",
     "in-view": "^0.6.1",
     "ioredis": "^4.6.2",

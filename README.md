@@ -1,19 +1,51 @@
-PaySuper Dashboard
-=====
+# PaySuper Dashboard
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues) 
+[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
 
-PaySuper is a unique, simple payment toolkit designed to make developers self-reliant. It’s an open-source payment service 
-with a highly customizable payment form, an intuitive API, and comprehensible, eye-catching reports.
+The PaySuper Dashboard is  designed as a management tool for a merchant. In this repo you may find the BFF server and VUE based frontend to interact with REST API ([Management API](https://github.com/paysuper/paysuper-management-api)) as administrative dashboard. Settings, management of [Projects and Products](https://docs.pay.super.com/docs/payments/quick-start), reporting is localed in PaySuper Dashboard.
 
-Dashboard is the BFF server and frontend to interact with all PaySuper related features for merchants. Use the 
-REST API ([Management API](https://github.com/paysuper/paysuper-management-api)) as backend. 
+|   | PaySuper Service Architecture
+:---: | :---
+✨ | **Checkout integration.** [PaySuper JS SDK](https://github.com/paysuper/paysuper-js-sdk) is designed to integrate a Checkout Form on a merchant's website or a game client.
+💵 | **Frontend for a payment form.** [PaySuper Checkout Form](https://github.com/paysuper/paysuper-payment-form) is a frontend for a sigle-page application with a payment form.
+📊 | **Frontend for a merchant.** [PaySuper Dashboard](https://github.com/paysuper/paysuper-dashboard) is the BFF server and frontend to interact with all PaySuper related features for merchants.
+🔧 | **API Backend.** [PaySuper Management API](https://github.com/paysuper/paysuper-management-api) is a REST API backend for the [PaySuper Dashboard](https://github.com/paysuper/paysuper-management-server) and the [PaySuper Checkout Form](https://github.com/paysuper/paysuper-payment-form). Public API methods are documented in the [API Reference](https://docs.pay.super.com/api).
+💳 | **Payment processing.** [Billing Server](https://github.com/paysuper/paysuper-billing-server) is a micro-service that provides with any payment processing business logic.
 
-# PayOne web interface
+***
 
-## Usage
+## Features
+
+* A nice looking dashboard with graph and key metrics.
+* Detailed statistics for each transaction.
+* Transparent payout calculation using Royalty reports.
+* Reports by a period like **Revenue Reports**: Revenue dynamic, Top countries, Best referrers, Top products, **Dashboard**: Last and next payout, Gross revenue, Total transactions, ARPU, VAT and more to come.
+* Export all reports to PDF, XLSX or CSV format for a period.
+
+## Table of Contents
+
+- [Developing](#developing)
+    - [Branches](#branches)
+    - [PaySuper web interface](#paysuper-web-interface)
+    - [Authentication backend for PaySuper](#authentication-backend-for-paysuper)
+    - [User Authentication](#user-authentication)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Developing
+
+### Branches
+
+We use the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model) as a branching model for Git.
+
+### PaySuper web interface
+
 ### Development
 
-1. To use image uploading create a `.env.local` file with following variables. Ask Andrey Solodovnikov for the values
+1. To use image uploading create a `.env.local` file with following variables.
+
 ```
 S3_ACCESS_KEY_ID
 S3_SECRET_ACCESS_KEY
@@ -22,37 +54,46 @@ S3_REGION
 ```
 
 2. Install dependecines:
-```
+
+```bash
 yarn
 ```
 
 2. Run these in different terminal windows:
-```
+
+```bash
 yarn serve
 ```
-```
+
+```bash
 yarn serve:be
 ```
 
+### Authentication backend for PaySuper
 
-# Authentication backend for PayOne
+#### Dependencies:
 
-## Dependencies: 
-* Node.js v10+
-* NPM v6+
-* Redis v5+
+* [Node.js](https://nodejs.org/en/download/) v10+
+* [NPM](https://www.npmjs.com/get-npm) v6+
+* [Redis](https://redis.io/topics/quickstart) v5+
 
-## Install and run
-* `npm install`
-* `npm prune --production`
-* `NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
+#### Install and run
+
+```
+npm install
+```
+
+```
+npm prune --production
+```
+
+```NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
 AUTH1_CLIENT_SECRET={string} AUTH1_ISSUER_URL={string} CORS_VALID_ORIGINS={string} POST_MESSAGE_TARGET_ORIGIN={string} 
 PUBLIC_HOST={string} REDIS_HOST={string} REDIS_PORT={string} ROUTES_PREFIX={string} SENTRY_DSN={string} SERVER_PORT=80 
-SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js`
+SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js
+```
 
-Where:
-
-*Obligatory params*
+**Obligatory params:**
 
 {AUTH1_CLIENT_ID} - client id for OAuth2 authentication through Auth1 service
 
@@ -86,11 +127,9 @@ Where:
 
 {SESSION_MAX_AGE} - session lifetime in seconds
 
+### User Authentication
 
-## User Authentication
-
-For make a user login, you must create subscribtion for receiving postMessages in your SPA, and then and open an 
-`/login` url in iframe.
+For make a user login, you must create subscribtion for receiving postMessages in your SPA, and then and open an `/login` url in iframe.
 All process of authentication will go in that frame, and finally you will be redirected to `/callback` url.
 
 As the result of authentication process you will receive a postMessage from iframe.  
@@ -98,26 +137,25 @@ Result will be a json-serialized object with auth token, expire time and error c
 Actual structure of object you may see in `backend/templates/auth1.postmessage.html.template` file.
 Also, targetOrigin of postMessage may be configured in `postMessageTargetOrigin` endpoints option.
 
-Token, that you receive form postMessage, you must store in browser's local storage and  pass as bearer authorization 
-header to all requests to your auth-protected API endpoints.
+Token, that you receive form postMessage, you must store in browser's local storage and  pass as bearer authorization header to all requests to your auth-protected API endpoints.
 
-For refresh you must send ajax request to `GET /refresh`, and you will get json response with updated token. 
+For refresh you must send ajax request to `GET /refresh`, and you will get json response with updated token.
 
 For logout you must send ajax request to `GET /logout`, this will revoke access and refresh tokens and destroy session.
-Logout endpoint send `204 No content` status in case of success, and `500 Internal server error` on other cases 
-(if user already logged out, for example, or not logged yet). In most cases you can ignore this error in your SPA
+Logout endpoint send `204 No content` status in case of success, and `500 Internal server error` on other cases (if user already logged out, for example, or not logged yet). In most cases you can ignore this error in your SPA
 
-You do not need pass bearer authorization header to refresh and logout endpoints, because they are authorize your 
-request by user session cookie. Be sure, that you enable send cookies with this requests in your's framework http 
-client!
+You do not need pass bearer authorization header to refresh and logout endpoints, because they are authorize your request by user session cookie. Be sure, that you enable send cookies with this requests in your's framework http client!
 
 Also, good idea will be close refresh and logout endpoints with CORS Policy.
 
 ## Contributing
-We feel that a welcoming community is important and we ask that you follow PaySuper's [Open Source Code of Conduct](https://github.com/paysuper/code-of-conduct/blob/master/README.md) in all interactions with the community.
 
-PaySuper welcomes contributions from anyone and everyone. Please refer to each project's style and contribution guidelines for submitting patches and additions. In general, we follow the "fork-and-pull" Git workflow.
+If you like this project then you can put a ⭐️ on it.
 
-The master branch of this repository contains the latest stable release of this component.
+We welcome contributions to PaySuper of any kind including documentation, suggestions, bug reports, pull requests etc. We would love to hear from you. In general, we follow the "fork-and-pull" Git workflow.
 
- 
+We feel that a welcoming community is important and we ask that you follow the PaySuper's [Open Source Code of Conduct](https://github.com/paysuper/code-of-conduct/blob/master/README.md) in all interactions with the community.
+
+## License
+
+The project is available as open source under the terms of the [GPL v3 License](https://www.gnu.org/licenses/gpl-3.0).

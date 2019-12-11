@@ -43,6 +43,7 @@ export default {
     ...mapState('ProjectsListing', ['projects', 'query']),
     ...mapGetters('ProjectsListing', ['getFilterValues']),
     ...mapGetters('User', ['userPermissions']),
+    ...mapGetters('User/Merchant', ['hasProjects']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -142,7 +143,9 @@ export default {
          * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
          * remove this and use has_projects attribute from merchant object
          */
-        this.completeStep('projects');
+        if (!this.hasProjects) {
+          this.completeStep('projects');
+        }
         this.$router.push({
           name: 'Project',
           params: {

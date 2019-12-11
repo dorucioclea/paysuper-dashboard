@@ -40,8 +40,19 @@ function $getValidatedFieldProps(fieldPath) {
   };
 }
 
+function $getValidatedEachFieldProps(path, fieldNames) {
+  const getFieldErrors = fieldNames.map(name => this.$isFieldInvalid(`${path}.$each.${name}`));
+  const getFieldErrorsText = fieldNames.map(name => this.$getFieldErrorMessages(`${path}.$each.${name}`));
+  return {
+    required: true,
+    hasError: getFieldErrors.indexOf(true) > -1,
+    errorText: getFieldErrorsText.find(text => text !== '') || '',
+  };
+}
+
 extend(Vue.prototype, {
   $getFieldErrorMessages,
   $getValidatedFieldProps,
   $isFieldInvalid,
+  $getValidatedEachFieldProps,
 });

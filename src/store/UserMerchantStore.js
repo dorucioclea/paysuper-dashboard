@@ -201,6 +201,8 @@ export default function createMerchantStore() {
             }),
           );
         }
+
+        return result;
       },
 
       closeCompleteShown({ commit }) {

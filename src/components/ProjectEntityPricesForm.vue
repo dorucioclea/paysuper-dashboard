@@ -138,15 +138,18 @@ export default {
     async fillPrice(amount, type) {
       this.setIsLoading(true);
       const { currency } = this.defaultCurrency;
-      const prices = await this.getRecommendedPrices({ type, amount, currency })
-        .catch(this.$showErrorMessage);
-      prices.forEach((price) => {
-        const item = find(this.priceData, { region: price.region, currency: price.currency });
-        if (item) {
-          item.amount = price.amount;
-        }
-      });
-      this.updatePrice();
+      try {
+        const prices = await this.getRecommendedPrices({ type, amount, currency });
+        prices.forEach((price) => {
+          const item = find(this.priceData, { region: price.region, currency: price.currency });
+          if (item) {
+            item.amount = price.amount;
+          }
+        });
+        this.updatePrice();
+      } catch (error) {
+        this.$showErrorMessage(error);
+      }
       this.setIsLoading(false);
     },
 

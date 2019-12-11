@@ -61,12 +61,17 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('UserRolePage', ['resendInvite', 'delete', 'changeRole']),
 
-    async handleAddUser(user) {
+    handleAddUser(user) {
       this.setIsLoading(true);
-      await this.resendInvite(user).catch(this.$showErrorMessage);
-      this.inviteModal = false;
-      this.setIsLoading(false);
-      this.inviteSuccessModal = true;
+      this.resendInvite(user)
+        .then(() => {
+          this.inviteSuccessModal = true;
+        })
+        .catch(this.$showErrorMessage)
+        .finally(() => {
+          this.inviteModal = false;
+          this.setIsLoading(false);
+        });
     },
 
     deleteUser() {
@@ -106,7 +111,7 @@ export default {
             <UiLabelSwitch
               v-if="user.role !== 'merchant_owner'"
               :value="user.role"
-              :scheme="roleScheme"
+              :scheme="scheme"
               @input="handleChangeRole($event, user)"/>
             <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
           </template>

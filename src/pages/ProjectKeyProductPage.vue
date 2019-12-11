@@ -70,12 +70,12 @@ export default {
   validations: {
     keyProductLocal: {
       name: {
-        en: {
+        $each: {
           required,
         },
       },
       description: {
-        en: {
+        $each: {
           required,
         },
       },
@@ -262,13 +262,17 @@ export default {
         :langs="project.localizations"
         :disabled="viewOnly"
         v-model="keyProductLocal.name"
-        v-bind="$getValidatedFieldProps('keyProductLocal.name.en')"
+        v-bind="$getValidatedEachFieldProps(
+        'keyProductLocal.name',
+         Object.keys(keyProductLocal.name))"
       />
       <UiLangTextField
         label="Description"
         :langs="project.localizations"
         v-model="keyProductLocal.description"
-        v-bind="$getValidatedFieldProps('keyProductLocal.description.en')"
+        v-bind="$getValidatedEachFieldProps(
+        'keyProductLocal.description',
+         Object.keys(keyProductLocal.description))"
       />
       <UiTextField
         label="SKU"

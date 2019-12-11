@@ -345,13 +345,15 @@ const routes = [
   },
   {
     path: '/form-demo/',
-    component: () => import('@/pages/PaymentFormSdk.vue'),
+    component: () => import('@/pages/DemoShopPage.vue'),
     meta: { layout: 'PageShallow', initStore: ['config'] },
-    name: 'PaymentFormSdk',
+    name: 'DemoShop',
   },
   {
     path: '/payform-sdk/',
-    redirect: { name: 'PaymentFormSdk' },
+    component: () => import('@/pages/PaymentFormSdk.vue'),
+    meta: { layout: 'PageShallow', initStore: ['config'] },
+    name: 'PaymentFormSdk',
   },
   {
     path: '/profile/',

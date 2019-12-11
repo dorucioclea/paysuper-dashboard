@@ -6,16 +6,13 @@ function mapDataApiToForm(data) {
     cover: {
       images: {
         en: '',
-        ru: '',
       },
       use_one_for_all: true,
     },
     name: {
-      ru: '',
       en: '',
     },
     description: {
-      ru: '',
       en: '',
     },
     object: 'key_product',

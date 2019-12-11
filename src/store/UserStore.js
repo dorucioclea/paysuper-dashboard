@@ -59,8 +59,8 @@ export default function createUserStore(resources) {
           const { profile, merchant, role } = await dispatch('getMetaProfile');
           commit('role', role.role);
           commit('isAuthorised', true);
-          dispatch('Profile/initState', profile);
-          dispatch('Merchant/initState', merchant);
+          await dispatch('Profile/initState', profile);
+          await dispatch('Merchant/initState', merchant);
           await dispatch('checkPrimaryOnboardingStep');
 
           dispatch('Notifications/initState');

@@ -2,7 +2,6 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { delay, get, includes } from 'lodash-es';
 import Centrifuge from 'centrifuge';
-import initHellosign from '@/helpers/initHellosign';
 
 function getDefaultAgreementDocument() {
   return {
@@ -16,14 +15,13 @@ function getDefaultAgreementDocument() {
 }
 
 export default function createLicenseAgreementStore() {
+  let centrifuge = null;
+
   return {
     namespaced: true,
     state: {
-      helloSign: null,
-      signature: null,
       isAgreementLoading: false,
       agreement: getDefaultAgreementDocument(),
-      hasGeneratedAgreement: false,
     },
     getters: {
       isSigendYou(state, getters) {
@@ -31,9 +29,6 @@ export default function createLicenseAgreementStore() {
       },
       isSigendPS(state, getters) {
         return getters.status === 4;
-      },
-      isUsingHellosign(state, getters) {
-        return !includes([3, 4, 5, 6], getters.status);
       },
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
@@ -55,61 +50,25 @@ export default function createLicenseAgreementStore() {
       document(state, data) {
         state.document = data;
       },
-      helloSign(state, data) {
-        state.helloSign = data;
-      },
       isAgreementLoading(state, data) {
         state.isAgreementLoading = data;
       },
-      signature(state, data) {
-        state.signature = data;
-      },
-      hasGeneratedAgreement(state, data) {
-        state.hasGeneratedAgreement = data;
-      },
     },
     actions: {
-      async initState({
-        commit,
-        dispatch,
-        getters,
-        rootState,
-      }) {
-        const { hellosignClientId, hellosignTestMode } = rootState.config;
+      async initState({ dispatch, getters }) {
+        dispatch('stopWatchForChangeStatus');
 
-        await dispatch('fetchAgreementSignature');
         await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchDocument');
 
-        if (includes([3, 7], getters.status)) {
-          dispatch('initWaitingForChangeStatus');
-        }
-
-        if (getters.isUsingHellosign) {
-          const helloSign = initHellosign(hellosignClientId, hellosignTestMode);
-
-          helloSign.on('sign', () => {
-            dispatch('User/Merchant/updateStatus', 3, { root: true });
-            dispatch('initWaitingForChangeStatus');
-          });
-
-          commit('helloSign', helloSign);
-        }
-      },
-      async fetchAgreementSignature({ commit, getters }) {
-        const { isUsingHellosign, status } = getters;
-
-        if (isUsingHellosign && includes([7, 8], status)) {
-          const response = await axios.put(
-            '{apiUrl}/admin/api/v1/merchants/agreement/signature',
-          );
-
-          commit('signature', response.data);
+        if (includes([3, 7, 8], getters.status)) {
+          dispatch('watchForChangeStatus');
         }
       },
       async fetchAgreementMetadata({ commit, dispatch, getters }, retryCount = 0) {
         const { status } = getters;
 
-        if (includes([3, 4, 7, 8], status)) {
+        if (includes([3, 4, 8], status)) {
           commit('isAgreementLoading', true);
           const response = await dispatch('updateMetadata', retryCount);
           const agreement = get(response, 'data', getDefaultAgreementDocument());
@@ -161,34 +120,26 @@ export default function createLicenseAgreementStore() {
 
         return false;
       },
-      openLicense({ state, getters }) {
-        if (getters.isUsingHellosign) {
-          state.helloSign.open(state.signature.sign_url);
-        }
-      },
-      initWaitingForChangeStatus({ dispatch, getters, state }) {
+      watchForChangeStatus({ dispatch, getters }) {
         const { centrifugoToken, merchantId, websocketUrl } = getters;
-        const centrifuge = new Centrifuge(websocketUrl);
+
+        if (centrifuge || !merchantId || !centrifugoToken) {
+          return;
+        }
+
+        centrifuge = new Centrifuge(websocketUrl);
 
         centrifuge.setToken(centrifugoToken);
         centrifuge.subscribe(`paysuper:merchant#${merchantId}`, async ({ data }) => {
           const status = get(data, 'statuses.to', null);
 
-          if (status === 6) {
+          if (status === 6 || status === 8) {
             dispatch('User/Merchant/updateStatus', status, { root: true });
             return;
           }
-
-          if (status === 8) {
+          if (status === 3) {
             dispatch('User/Merchant/updateStatus', status, { root: true });
-            if (state.signature) {
-              return;
-            }
-            if (state.hasGeneratedAgreement) {
-              await dispatch('fetchAgreementSignature');
-            } else {
-              dispatch('initWaitingForSignatureGenerated');
-            }
+            dispatch('fetchAgreementMetadata', 20);
             return;
           }
 
@@ -203,25 +154,11 @@ export default function createLicenseAgreementStore() {
         });
         centrifuge.connect();
       },
-      initWaitingForSignatureGenerated({ commit, dispatch, getters }) {
-        const {
-          centrifugoToken,
-          merchantId,
-          status,
-          websocketUrl,
-        } = getters;
-        const centrifuge = new Centrifuge(websocketUrl);
-
-        centrifuge.setToken(centrifugoToken);
-        centrifuge.subscribe(`paysuper:merchant#${merchantId}`, async ({ data }) => {
-          if (get(data, 'generated') === true) {
-            if (status === 8) {
-              await dispatch('fetchAgreementSignature', true);
-            }
-            commit('hasGeneratedAgreement', true);
-          }
-        });
-        centrifuge.connect();
+      stopWatchForChangeStatus() {
+        if (centrifuge) {
+          centrifuge.disconnect();
+          centrifuge = null;
+        }
       },
     },
   };

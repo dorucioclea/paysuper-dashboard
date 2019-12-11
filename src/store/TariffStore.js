@@ -151,11 +151,7 @@ export default function createTariffStore() {
         if (response.status === 200) {
           dispatch('User/Merchant/completeStep', 'tariff', { root: true });
           dispatch('User/Merchant/updateStatus', 7, { root: true });
-          await dispatch(
-            'Company/LicenseAgreement/initWaitingForSignatureGenerated',
-            true,
-            { root: true },
-          );
+          dispatch('Company/LicenseAgreement/watchForChangeStatus', true, { root: true });
           return true;
         }
 

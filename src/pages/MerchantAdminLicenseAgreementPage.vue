@@ -55,17 +55,11 @@ export default {
     },
   },
   mounted() {
-    this.initHellosign();
     this.hasInitSigned = this.merchant.status === 4;
   },
   methods: {
     ...mapActions('Merchant', ['changeMerchantStatus', 'sendNotification']),
-    ...mapActions('MerchantLicenseAgreement', [
-      'uploadDocument',
-      'openLicense',
-      'initHellosign',
-      'setOperatingCompany',
-    ]),
+    ...mapActions('MerchantLicenseAgreement', ['uploadDocument', 'setOperatingCompany']),
 
     async sendMessage(message) {
       const success = await this.sendNotification({
@@ -117,7 +111,6 @@ export default {
     :isAgreementLoading="isAgreementLoading"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
-    @openLicense="openLicense"
     @uploadDocument="uploadDocument"
     @confirm="confirmOperatingCompany"
   />

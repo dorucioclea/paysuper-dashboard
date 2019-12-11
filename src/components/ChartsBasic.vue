@@ -1,5 +1,10 @@
 <script>
-import { get, find, merge } from 'lodash-es';
+import {
+  get,
+  find,
+  merge,
+  truncate,
+} from 'lodash-es';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
 
@@ -64,6 +69,10 @@ export default {
       return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
     get,
+
+    getTruncateLink(link) {
+      return truncate(link, { length: 40 });
+    },
   },
 };
 </script>
@@ -156,7 +165,9 @@ export default {
             :key="index"
             class="top-item"
           >
-            <div class="country">{{ item.name }}</div>
+            <div class="country" :title="item.name">
+              {{ getTruncateLink(item.name) }}
+            </div>
             <div class="amount">{{ item.count }}</div>
           </div>
         </div>
@@ -245,6 +256,7 @@ export default {
   letter-spacing: 0.4px;
 }
 .chart {
+  width: 264px;
   height: 70px;
   border-bottom: 1px solid #e3e5e6;
 }
@@ -266,7 +278,7 @@ export default {
   display: flex;
   justify-content: space-between;
   flex-basis: 100%;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-top: 20px;
 }
 .basic-item {

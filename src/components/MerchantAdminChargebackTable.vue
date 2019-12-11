@@ -1,10 +1,5 @@
 <script>
-import {
-  get,
-  find,
-  map,
-  tail,
-} from 'lodash-es';
+import { map, tail } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
@@ -24,10 +19,6 @@ export default {
 
   props: {
     chargeback: {
-      required: true,
-      type: Array,
-    },
-    countries: {
       required: true,
       type: Array,
     },
@@ -70,9 +61,6 @@ export default {
       data.payoutParty = item;
       data.isPayoutPartyMenuOpened = false;
     },
-    getCountryByCode(code) {
-      return get(find(this.countries, ({ value }) => value === code), 'label', code);
-    },
   },
 };
 </script>
@@ -84,7 +72,6 @@ export default {
       <UiComplexTableCell class="cell _method">For all methods</UiComplexTableCell>
       <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
       <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
-      <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
       <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
       <UiComplexTableCell class="cell _fee">Chargeback fee payout party</UiComplexTableCell>
     </UiComplexTableRow>
@@ -111,9 +98,6 @@ export default {
         </UiComplexTableCell>
         <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
         <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
-        <UiComplexTableCell class="cell _country">
-          {{ getCountryByCode(data.country) }}
-        </UiComplexTableCell>
         <UiComplexTableCell
           class="cell _fee"
           v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
@@ -161,26 +145,26 @@ export default {
 <style lang="scss" scoped>
 .cell {
   &._method {
-    width: 30%;
+    width: 28%;
 
     &._leading {
       cursor: pointer;
     }
   }
   &._currency {
-    width: 7%;
+    width: 10%;
   }
   &._region {
-    width: 7%;
+    width: 10%;
   }
   &._country {
     width: 18%;
   }
   &._fee {
-    width: 13%;
+    width: 20%;
   }
   &._payout-party {
-    width: 13%;
+    width: 20%;
     cursor: pointer;
     position: relative;
   }

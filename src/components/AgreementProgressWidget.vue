@@ -149,7 +149,7 @@ export default {
         {
           id: 'license',
           title: '5. Complete “License Agreement” in “Settings” section',
-          performText: 'Here you can initiate a License Agreement signing procedure. Please double-check your Company info and Payment Methods above, since it will be mentioned in this document. For e-signing we use “Hellosign” service, which provides legally binding electronic signatures.',
+          performText: 'License Agreement signing procedure is initiated and document signing instructions are sent to your Company Representative’s e-mail. Please make sure this person received the e-mail and has authority to sign legal documentation. For e-signing we use “Hellosign” service, which provides legally binding electronic signatures.',
           ...this.licenseStatus,
           page: 'company',
         },
@@ -213,11 +213,11 @@ export default {
       :isExpanded="expandItems[item.id]"
       @toggle="toggle($event, item.id)"
     >
-      <div class="perform" v-if="hasItemPerform(item.status)">
-        <div class="perform__text">
+      <div v-if="hasItemPerform(item.status)">
+        <div class="perform-text">
           {{ item.performText }}
         </div>
-        <div class="perform__button">
+        <div class="perform-button">
           <RouterLink :to="{ name: `${item.page}`, params: { expandedItem: `${item.id}` }}" >
             <UiButton>
               PERFORM THIS STEP
@@ -256,20 +256,19 @@ export default {
     vertical-align: top;
   }
 }
-
 .title {
   margin-bottom: 4px;
 }
 .item {
   margin-bottom: 8px;
 }
-
-.perform {
-  &__text {
-    color: #5e6366;
-    font-size: 14px;
-    line-height: 20px;
-    margin-bottom: 8px;
-  }
+.perform-text {
+  color: #5e6366;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 8px;
+}
+.perform-button {
+  margin-top: 18px;
 }
 </style>

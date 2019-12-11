@@ -11,14 +11,8 @@ export default {
     ...mapState('Company/LicenseAgreement', [
       'document',
       'agreement',
-      'signature',
       'isAgreementLoading',
     ]),
-    ...mapGetters('User', ['userPermissions']),
-
-    viewOnly() {
-      return !this.userPermissions.editCompany;
-    },
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -56,7 +50,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('Company/LicenseAgreement', ['initState', 'openLicense', 'uploadDocument']),
+    ...mapActions('Company/LicenseAgreement', ['initState', 'uploadDocument']),
   },
 };
 </script>
@@ -65,10 +59,9 @@ export default {
 <div class="license-agreement">
   <div class="section">
     <div class="info">
-      Here you can initiate a License Agreement signing procedure.
-      Please double-check your Company info and Payment Methods above,
-      since it will be mentioned in this document.
-      For e-signing we use “Hellosign” service,
+      License Agreement signing procedure is initiated and document signing instructions are sent
+      to your Company Representative’s e-mail. Please make sure this person received the e-mail
+      and has authority to sign legal documentation. For e-signing we use “Hellosign” service,
       which provides legally binding electronic signatures.
     </div>
 
@@ -124,19 +117,6 @@ export default {
       </div>
     </div>
   </div>
-
-  <UiButton
-    v-if="(!isSigendYou || !isSigendPS) && !viewOnly"
-    class="submit"
-    :disabled="isSigendYou || !signature"
-    @click="openLicense"
-  >
-    <UiSimplePreloader
-      v-if="isOnboardingStepsComplete && !signature"
-      slot="iconBefore"
-    />
-    REVIEW & SIGN
-  </UiButton>
 </div>
 </template>
 

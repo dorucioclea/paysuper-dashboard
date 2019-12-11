@@ -183,7 +183,7 @@ export default function createMerchantStore() {
 
       updateStatus({ commit, state }, status) {
         commit('merchant', { ...state.merchant, status });
-        commit('merchantStatus', status > 3 ? 'life' : 'draft');
+        commit('merchantStatus', status === 4 ? 'life' : 'draft');
       },
 
       completeStep({ commit, state }, stepName) {
@@ -197,10 +197,13 @@ export default function createMerchantStore() {
           });
         }
         if (stepName === 'projects') {
-          commit('isCompleteShown', true);
           commit('hasProjects', true);
         }
         commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+
+        if (state.onboardingCompleteStepsCount > 5) {
+          commit('isCompleteShown', true);
+        }
       },
 
       async fetchMerchantPaymentMethods({ state, commit }, id) {

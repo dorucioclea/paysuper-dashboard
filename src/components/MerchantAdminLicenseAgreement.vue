@@ -68,7 +68,7 @@ export default {
         { value: this.merchantStatus },
       ) || merchantStatusScheme[0];
 
-      if (includes(['new', 'signing', 'accepted'], currentStatus.value)) {
+      if (includes(['new', 'signing', 'pending', 'accepted'], currentStatus.value)) {
         return [currentStatus, merchantStatusScheme[6]];
       }
 
@@ -170,14 +170,6 @@ export default {
           class="agreement-preloader"
         />
       </a>
-      <div
-        v-if="merchantStatus === 'signing'"
-        class="link"
-        @click="openLicense"
-      >
-        <IconPen class="icon" />
-        E-SIGN
-      </div>
     </div>
   </section>
   <section
@@ -200,7 +192,10 @@ export default {
       </UiRadio>
     </div>
   </section>
-  <section class="section">
+  <section
+    v-if="merchantStatus !== 'new'"
+    class="section"
+  >
     <UiHeader level="3" :hasMargin="true">
       Signing companies
     </UiHeader>
