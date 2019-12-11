@@ -190,7 +190,7 @@ export default {
 
 <template>
   <div>
-    <UiPageHeaderFrame class="picture">
+    <UiPageHeaderFrame pictureGrow="0" class="picture">
       <template slot="title">
         Payment links
       </template>
@@ -408,9 +408,5 @@ export default {
 
 .picture {
   justify-content: space-between;
-  /deep/
-  .header-picture {
-    flex-grow: 0;
-  }
 }
 </style>

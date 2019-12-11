@@ -206,7 +206,7 @@ export default {
   <input
     v-if="!isMoney && !isNumeric"
     v-model="inputValue"
-    v-bind="{ ...$c, type, required, disabled }"
+    v-bind="{ ...$attrs, type, required, disabled }"
     :class="inputClasses"
     @focus="$emit('focus')"
     @blur="handleBlur"

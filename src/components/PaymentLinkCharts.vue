@@ -176,7 +176,7 @@ export default {
 </script>
 
 <template>
-<div id="dashboard-charts" class="charts">
+<div class="charts">
   <PaymentLinkChartsHeader
     :period="mainPeriod"
     :filters="dateFilter"
