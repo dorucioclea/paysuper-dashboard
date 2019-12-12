@@ -19,8 +19,7 @@ export default {
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts']),
-    ...mapGetters('Dictionaries', ['countries']),
+    ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts', 'isLoading']),
     ...mapGetters('MerchantTariff', ['hasChanged']),
 
     homeRegion() {
@@ -58,13 +57,28 @@ export default {
     :channelCosts="channelCosts"
     :chargeback="chargeback"
     :refundCosts="refundCosts"
-    :countries="countries"
-    :hasChanged="hasChanged"
+    :isLoading="isLoading"
     @updateChannelCost="updateChannelCost"
     @updateRefundCost="updateRefundCost"
     @updateChargeback="updateChargeback"
-    @submitForms="save"
-  />
+  >
+    <div
+      slot="controls"
+      class="controls"
+    >
+      <UiButton
+        class="submit-button"
+        text="SAVE"
+        :disabled="!hasChanged"
+        @click="save"
+      >
+        <UiSimplePreloader
+          v-if="isLoading"
+          slot="iconBefore"
+        />
+      </UiButton>
+    </div>
+  </MerchantAdminFormPaymentMethods>
 </div>
 </template>
 
@@ -74,5 +88,12 @@ export default {
 }
 .text {
   width: 448px;
+}
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+.submit-button {
+  width: 140px;
 }
 </style>

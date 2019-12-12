@@ -18,6 +18,10 @@ export default {
       required: true,
       type: Object,
     },
+    isUpdating: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {
@@ -60,6 +64,17 @@ export default {
       });
     },
   },
+
+  watch: {
+    isUpdating: {
+      handler(value) {
+        if (!value) {
+          this.$_PaymentMethodsTable_offChanged(this.innerChannelCosts, this.activeFieldNames);
+        }
+      },
+      immediate: true,
+    },
+  },
 };
 </script>
 
@@ -75,9 +90,7 @@ export default {
     <UiComplexTableCell class="cell _fee">Overall fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">PS general fixed fee</UiComplexTableCell>
   </UiComplexTableRow>
-  <template
-    v-for="(data, index) in channelCostsFlattened"
-  >
+  <template v-for="(data, index) in channelCostsFlattened">
     <UiComplexTableRow
       :key="index"
       :isPainted="index % 2 === 1"

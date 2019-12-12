@@ -1,5 +1,5 @@
 <script>
-import { map, tail } from 'lodash-es';
+import { find, map, tail } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
@@ -21,6 +21,10 @@ export default {
     chargeback: {
       required: true,
       type: Array,
+    },
+    isUpdating: {
+      default: false,
+      type: Boolean,
     },
   },
 
@@ -60,6 +64,29 @@ export default {
       }
       data.payoutParty = item;
       data.isPayoutPartyMenuOpened = false;
+
+      this.$emit('changeCell', {
+        ...find(this.chargeback, { id: data.id }),
+        payoutParty: item,
+      });
+    },
+    changeCell(field, data, value) {
+      this.$_PaymentMethodsTable_handleCellChange(data[field], value);
+      this.$emit('changeCell', {
+        ...find(this.chargeback, { id: data.id }),
+        [field]: value,
+      });
+    },
+  },
+
+  watch: {
+    isUpdating: {
+      handler(value) {
+        if (!value) {
+          this.$_PaymentMethodsTable_offChanged(this.innerСhargeback, this.activeFieldNames);
+        }
+      },
+      immediate: true,
     },
   },
 };
@@ -83,7 +110,7 @@ export default {
         :isPainted="index % 2 === 1"
       >
         <UiComplexTableCell
-        :class="['cell', '_method', { '_leading': !data.parent }]"
+          :class="['cell', '_method', { '_leading': !data.parent }]"
           align="left"
           :isCollapsed="!!data.parent"
           :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, activeFieldNames)"
@@ -105,8 +132,8 @@ export default {
           v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
           @toggleFocus="data.fixedFee.hasFocus = $event"
           @moveFocus="moveFocus(index, 'fixedFee', $event)"
-          @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
-          mask="NNNNNN"
+          @change="changeCell('fixedFee', data, $event)"
+          mask="##.##"
         >
           {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrencySymbol) }}
         </UiComplexTableCell>

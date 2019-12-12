@@ -70,6 +70,7 @@ function prepareMoneyBack(data) {
         payoutCurrencySymbol: getCurrencySymbol(item.payout_currency),
         payoutParty: item.is_paid_by_merchant ? 'Merchant' : 'PaySuper',
         region: item.region,
+        paymentStage: item.payment_stage,
         regionAbbr: getRegionAbbr(item.region),
         type: item.undo_reason,
       })),
@@ -92,6 +93,7 @@ export default function createMerchantTariffStore() {
       chargeback: [],
       merchantId: null,
       refundCosts: {},
+      isLoading: false,
       updatedChannelCosts: {},
       updatedChargeback: {},
       updatedRefundCosts: {},
@@ -116,6 +118,9 @@ export default function createMerchantTariffStore() {
       refundCosts(state, data) {
         state.refundCosts = data;
       },
+      isLoading(state, data) {
+        state.isLoading = data;
+      },
       updatedChannelCosts(state, data) {
         state.updatedChannelCosts = data;
       },
@@ -129,6 +134,9 @@ export default function createMerchantTariffStore() {
     actions: {
       async initState({ commit, dispatch }, merchantId) {
         commit('merchantId', merchantId);
+        commit('updatedChannelCosts', {});
+        commit('updatedRefundCosts', {});
+        commit('updatedChargeback', {});
 
         await Promise.all([
           dispatch('fetchChannelCosts'),
@@ -183,10 +191,10 @@ export default function createMerchantTariffStore() {
             payout_currency: channelCost.payoutCurrency,
             min_amount: channelCost.amount,
             region: channelCost.region,
-            method_percent: toNumber(channelCost.methodFee),
+            method_percent: toNumber(channelCost.methodFee) / 100,
             method_fix_amount: toNumber(channelCost.fixedFee),
             method_fix_amount_currency: channelCost.fixedFeeCurrency,
-            ps_percent: toNumber(channelCost.overallFee),
+            ps_percent: toNumber(channelCost.overallFee) / 100,
             ps_fixed_fee: toNumber(channelCost.psGeneralFixedFee),
             ps_fixed_fee_currency: channelCost.psGeneralfixedFeeCurrency,
             mcc_code: channelCost.mcc,
@@ -207,17 +215,18 @@ export default function createMerchantTariffStore() {
           ...state.refundCosts,
           [method]: refundCostsByMethod,
         });
-        commit('updatedrefundCosts', {
-          ...state.updatedrefundCosts,
+        commit('updatedRefundCosts', {
+          ...state.updatedRefundCosts,
           [id]: {
             name: method,
             payout_currency: refundCost.payoutCurrency,
             undo_reason: refundCost.type,
             region: refundCost.region,
-            percent: toNumber(refundCost.methodFee),
+            percent: toNumber(refundCost.methodFee) / 100,
             fix_amount: toNumber(refundCost.fixedFee),
             fix_amount_currency: refundCost.fixedFeeCurrency,
-            is_paid_by_merchant: refundCost === 'Merchant',
+            is_paid_by_merchant: refundCost.payoutParty === 'Merchant',
+            payment_stage: refundCost.paymentStage,
             mcc_code: refundCost.mcc,
           },
         });
@@ -237,22 +246,28 @@ export default function createMerchantTariffStore() {
             payout_currency: chargeback.payoutCurrency,
             undo_reason: chargeback.type,
             region: chargeback.region,
-            percent: toNumber(chargeback.methodFee),
+            percent: toNumber(chargeback.methodFee) / 100,
             fix_amount: toNumber(chargeback.fixedFee),
             fix_amount_currency: chargeback.fixedFeeCurrency,
-            is_paid_by_merchant: chargeback === 'Merchant',
+            is_paid_by_merchant: chargeback.payoutParty === 'Merchant',
+            payment_stage: chargeback.paymentStage,
             mcc_code: chargeback.mcc,
           },
         });
       },
       async save({ commit, dispatch }) {
-        await Promise.all(
+        commit('isLoading', true);
+
+        await Promise.all([
           dispatch('saveChannelCosts'),
           dispatch('saveMoneyBack'),
-        );
+        ]);
+
         commit('updatedChannelCosts', {});
-        commit('updatedrefundCosts', {});
+        commit('updatedRefundCosts', {});
         commit('updatedChargeback', {});
+
+        commit('isLoading', false);
       },
       async saveChannelCosts({ state }) {
         const { merchantId, updatedChannelCosts } = state;
@@ -268,7 +283,7 @@ export default function createMerchantTariffStore() {
         const { merchantId, updatedChargeback, updatedRefundCosts } = state;
 
         await Promise.all(
-          map([...updatedChargeback, ...updatedRefundCosts], (value, id) => axios.put(
+          map({ ...updatedChargeback, ...updatedRefundCosts }, (value, id) => axios.put(
             `{apiUrl}/system/api/v1/payment_costs/money_back/merchant/${merchantId}/${id}`,
             value,
           )),
