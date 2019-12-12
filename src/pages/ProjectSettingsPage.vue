@@ -194,6 +194,7 @@ export default {
 
     <div class="controls" v-if="!viewOnly">
       <UiButton
+        :disabled="$v.projectLocal.$invalid"
         class="submit-button"
         @click="handleSave"
         text="SAVE"

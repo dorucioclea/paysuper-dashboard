@@ -63,6 +63,9 @@ export default {
           required,
         },
       },
+      logo: {
+        required,
+      },
     };
     if (this.virtualCurrency.max_purchase_value) {
       virtualCurrency.min_purchase_value = {
@@ -231,6 +234,7 @@ export default {
 
     <div class="controls" v-if="!viewOnly">
       <UiButton
+        :disabled="$v.virtualCurrency.$invalid"
         class="submit-button"
         @click="handleSave"
         text="SAVE"

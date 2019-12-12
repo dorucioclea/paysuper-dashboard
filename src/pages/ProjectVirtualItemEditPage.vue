@@ -103,6 +103,9 @@ export default {
 
   validations() {
     const item = {
+      image: {
+        required,
+      },
       item: {
         name: {
           $each: {
@@ -321,7 +324,7 @@ export default {
       <div class="controls" v-if="!viewOnly">
         <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
         <UiButton
-          :disabled="$v.item.$invalid"
+          :disabled="$v.item.$invalid || $v.image.$invalid"
           class="submit-button"
           @click="saveItem"
           text="SAVE"
