@@ -147,11 +147,9 @@ export default {
   justify-content: space-between;
   flex-basis: 100%;
   background-color: #fff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
-  border-radius: 12px;
   margin-bottom: 16px;
   flex-wrap: wrap;
-  padding: 30px 24px 20px;
+  padding: 30px 0 20px;
 }
 .value {
   font-family: Quicksand;

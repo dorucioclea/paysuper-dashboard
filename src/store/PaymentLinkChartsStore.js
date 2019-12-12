@@ -1,6 +1,5 @@
 import axios from 'axios';
 import qs from 'qs';
-import { get } from 'lodash-es';
 import {
   getTime,
   getDaysInMonth,
@@ -87,6 +86,7 @@ export default function createPaymentLinkChartsStore() {
       summary: null,
       referrer: null,
       utm: null,
+      transactions: null,
       currency: 'USD',
       mainPeriod: getDefaultPeriod('main'),
       lastPayments: [],
@@ -133,12 +133,14 @@ export default function createPaymentLinkChartsStore() {
           return;
         }
 
-        await dispatch('fetchChart', 'summary');
-        await dispatch('fetchChart', 'country');
-        await dispatch('fetchChart', 'referrer');
-        await dispatch('fetchChart', 'date');
-        await dispatch('fetchChart', 'utm');
-        await dispatch('fetchLastPayments');
+        await Promise.all([
+          dispatch('fetchChart', 'summary'),
+          dispatch('fetchChart', 'country'),
+          dispatch('fetchChart', 'referrer'),
+          dispatch('fetchChart', 'date'),
+          dispatch('fetchChart', 'utm'),
+          dispatch('fetchChart', 'transactions'),
+        ]);
       },
       async fetchChart({
         commit,
@@ -157,10 +159,11 @@ export default function createPaymentLinkChartsStore() {
           dateFrom: period.min,
           dateTo: period.max,
         }, { arrayFormat: 'brackets' });
+        const path = type !== 'transactions'
+          ? `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`
+          : `${apiUrl}/admin/api/v1/paylinks/${Id}/${type}`;
 
-        const response = await axios.get(
-          `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`,
-        );
+        const response = await axios.get(path);
 
         if (response.data && response.data.top && response.data.top !== null) {
           commit(type, response.data);
@@ -169,37 +172,16 @@ export default function createPaymentLinkChartsStore() {
       async changePeriod({ commit, dispatch }, { period }) {
         commit('mainPeriod', period);
 
-        await dispatch('fetchChart', 'summary');
-        await dispatch('fetchChart', 'country');
-        await dispatch('fetchChart', 'referrer');
-        await dispatch('fetchChart', 'date');
-        await dispatch('fetchChart', 'utm');
-        await dispatch('fetchLastPayments');
+        await Promise.all([
+          dispatch('fetchChart', 'summary'),
+          dispatch('fetchChart', 'country'),
+          dispatch('fetchChart', 'referrer'),
+          dispatch('fetchChart', 'date'),
+          dispatch('fetchChart', 'utm'),
+          dispatch('fetchChart', 'transactions'),
+        ]);
 
         localStorage.setItem('main_PERIOD', JSON.stringify(period));
-      },
-      async fetchLastPayments({ commit, rootState }, count = 30) {
-        const { Merchant } = rootState.User;
-        const merchantId = Merchant.merchant.id;
-
-        if (!merchantId) {
-          return;
-        }
-
-        const { apiUrl } = rootState.config;
-        const queryString = qs.stringify({
-          merchant: [merchantId],
-          sort: ['-created_at'],
-          limit: count,
-        }, { arrayFormat: 'brackets' });
-
-        const response = await axios.get(
-          `${apiUrl}/admin/api/v1/order?${queryString}`,
-        );
-
-        if (response.data) {
-          commit('lastPayments', response.data.items);
-        }
       },
 
       initQuery({ commit }, query) {
@@ -224,9 +206,6 @@ export default function createPaymentLinkChartsStore() {
       },
     },
     mutations: {
-      base(state, data) {
-        state.base = data;
-      },
       date(state, data) {
         state.date = data;
       },
@@ -242,20 +221,11 @@ export default function createPaymentLinkChartsStore() {
       summary(state, data) {
         state.summary = data;
       },
-      revenueDynamics(state, data) {
-        const currency = get(data, 'transactions_currency');
-
-        state.revenue = get(data, 'items', []);
-
-        if (currency) {
-          state.currency = get(data, 'currency');
-        }
+      transactions(state, data) {
+        state.transactions = data;
       },
       mainPeriod(state, data) {
         state.mainPeriod = data;
-      },
-      lastPayments(state, data) {
-        state.lastPayments = data;
       },
       filterValues(store, value) {
         store.filterValues = value;

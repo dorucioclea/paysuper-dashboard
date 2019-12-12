@@ -58,9 +58,9 @@ export default {
 <template>
 <div class="charts-payments">
   <div class="box">
-    <div class="box-header">
-      <div class="box-title">UTM statistics</div>
-    </div>
+    <UiHeader level="3">
+      UTM statistics
+    </UiHeader>
 
     <UiScrollbarBox class="scrollbox">
       <UiTable class="table">
@@ -178,26 +178,10 @@ export default {
   justify-content: space-between;
   flex-basis: 100%;
   background-color: #fff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
-  border-radius: 12px;
   margin-bottom: 16px;
   flex-wrap: wrap;
-  height: 570px;
+  max-height: 570px;
   overflow: hidden;
-}
-.box-header {
-  display: flex;
-  flex-basis: 100%;
-  justify-content: space-between;
-}
-.box-title {
-  color: #000;
-  font-family: Quicksand;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
-  letter-spacing: 0.15px;
-  margin-right: 16px;
 }
 .scrollbox {
   width: 100%;

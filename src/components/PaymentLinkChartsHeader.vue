@@ -41,9 +41,9 @@ export default {
 
 <template>
 <div class="charts-header-payment-link">
-  <div class="title">
+  <UiHeader level="3">
     {{ title }}
-  </div>
+  </UiHeader>
   <div class="controls">
     <UiSelectAsButton
       color="transparent-gray"
@@ -52,11 +52,6 @@ export default {
       :value="period"
       :isTransparent="true"
       @input="$emit('changePeriod', { type: 'main', period: $event })"
-    />
-    <UiFilterDate
-      style="display: none;"
-      v-model="dateFilters"
-      @input="$emit('setFilters', dateFilters)"
     />
   </div>
 </div>
@@ -69,15 +64,6 @@ export default {
   margin-bottom: 24px;
   flex-grow: 1;
   align-items: center;
-}
-.title {
-  font-family: Quicksand;
-  font-size: 20px;
-  line-height: 28px;
-  letter-spacing: 0.25px;
-  color: #000;
-  padding-right: 16px;
-  font-weight: 500;
 }
 .controls {
   display: flex;

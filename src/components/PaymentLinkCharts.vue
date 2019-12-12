@@ -214,8 +214,5 @@ export default {
 .charts {
   display: flex;
   flex-direction: column;
-  /deep/.box {
-    box-shadow: none;
-  }
 }
 </style>
