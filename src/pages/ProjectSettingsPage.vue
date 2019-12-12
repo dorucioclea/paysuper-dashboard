@@ -33,7 +33,7 @@ export default {
   validations: {
     projectLocal: {
       name: {
-        en: {
+        $each: {
           required,
         },
       },
@@ -157,7 +157,7 @@ export default {
         :langs="projectLocal.localizations"
         :disabled="viewOnly"
         label="Project name"
-        v-bind="$getValidatedFieldProps('projectLocal.name.en')"
+        v-bind="$getValidatedEachFieldProps('projectLocal.name', Object.keys(projectLocal.name))"
       />
       <UiLangTextField
         :value="projectLocal.full_description"
@@ -194,6 +194,7 @@ export default {
 
     <div class="controls" v-if="!viewOnly">
       <UiButton
+        :disabled="$v.projectLocal.$invalid"
         class="submit-button"
         @click="handleSave"
         text="SAVE"

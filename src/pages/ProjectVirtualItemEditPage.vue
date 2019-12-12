@@ -103,21 +103,24 @@ export default {
 
   validations() {
     const item = {
+      image: {
+        required,
+      },
       item: {
         name: {
-          en: {
+          $each: {
             required,
             maxLength: maxLength(50),
           },
         },
         description: {
-          en: {
+          $each: {
             required,
             maxLength: maxLength(500),
           },
         },
         long_description: {
-          en: {
+          $each: {
             required,
             maxLength: maxLength(1500),
           },
@@ -242,21 +245,23 @@ export default {
           :disabled="viewOnly"
           v-model="item.name"
           label="Item name"
-          v-bind="$getValidatedFieldProps('item.name.en')"
+          v-bind="$getValidatedEachFieldProps('item.name', Object.keys(item.name))"
         />
         <UiLangTextField
           :langs="project.localizations"
           :disabled="viewOnly"
           v-model="item.description"
           label="Short description"
-          v-bind="$getValidatedFieldProps('item.description.en')"
+          v-bind="$getValidatedEachFieldProps('item.description', Object.keys(item.description))"
         />
         <UiLangTextField
           :langs="project.localizations"
           :disabled="viewOnly"
           v-model="item.long_description"
           label="Full description"
-          v-bind="$getValidatedFieldProps('item.long_description.en')"
+          v-bind="$getValidatedEachFieldProps(
+          'item.long_description',
+           Object.keys(item.long_description))"
         />
 
         <p class="text">
@@ -319,7 +324,7 @@ export default {
       <div class="controls" v-if="!viewOnly">
         <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
         <UiButton
-          :disabled="$v.item.$invalid"
+          :disabled="$v.item.$invalid || $v.image.$invalid"
           class="submit-button"
           @click="saveItem"
           text="SAVE"
