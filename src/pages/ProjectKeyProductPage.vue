@@ -24,7 +24,7 @@ export default {
 
   data() {
     return {
-      langFields: ['cover.images', 'name'],
+      langFields: ['cover.images', 'name', 'description'],
       keyProductLocal: null,
       isSkuUnique: true,
       isDisablePlatformConfirmOpened: false,
@@ -69,6 +69,13 @@ export default {
 
   validations: {
     keyProductLocal: {
+      cover: {
+        images: {
+          en: {
+            required,
+          },
+        },
+      },
       name: {
         $each: {
           required,

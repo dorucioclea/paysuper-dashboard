@@ -56,7 +56,7 @@ export default function exportFile() {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         centrifuge.setToken(rootState.User.Merchant.merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:user#${rootState.User.Merchant.merchant.id}`, ({ data }) => {
-          axios.get(`{apiUrl}/admin/api/v1/report_file/download/${data.file_name}`, {
+          axios.get(`{apiUrl}/auth/api/v1/report_file/download/${data.file_name}`, {
             headers: { Accept: `application/${state.extension}` },
             responseType: 'blob',
           })

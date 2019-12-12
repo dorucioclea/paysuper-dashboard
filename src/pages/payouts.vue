@@ -177,6 +177,7 @@ export default {
       this.createPayout(description)
         .then(() => {
           this.successModal = true;
+          this.filterPayouts();
         })
         .catch(this.$showErrorMessage)
         .finally(() => this.setIsLoading(false));

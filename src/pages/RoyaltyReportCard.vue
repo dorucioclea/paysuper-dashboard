@@ -141,7 +141,7 @@ export default {
       this.setIsLoading(true);
       await this.createReportFile({
         file_type: fileType.toLowerCase(),
-        report_type: 'royalty',
+        report_type: this.currentTab === 0 ? 'royalty' : 'royalty_transactions',
         params: {
           id: this.report.id,
         },
