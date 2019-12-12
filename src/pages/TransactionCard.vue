@@ -65,6 +65,18 @@ export default {
     hasRefund() {
       return !!this.refunds.items;
     },
+
+    address() {
+      if (!this.transaction.user.address) {
+        return '—';
+      }
+      return [
+        this.transaction.user.address.city,
+        this.transaction.user.address.state,
+        this.getCountryByCode(this.transaction.user.address.country),
+        this.transaction.user.address.postal_code,
+      ].filter(i => i).join(', ');
+    },
   },
 
   methods: {
@@ -180,7 +192,7 @@ export default {
                 {{ getCountryByCode(transaction.country_code) }}
               </div>
             </div>
-            <div class="details__item">
+            <div class="details__item" v-if="transaction.billing_address">
               <div class="details__item--label">Billing address</div>
               <div class="details__item--info">
                 {{ getCountryByCode(transaction.billing_address.country) }}
@@ -356,10 +368,7 @@ export default {
             <div class="details__item">
               <div class="details__item--label">Address</div>
               <div class="details__item--info">
-                {{ transaction.user.address.city }},
-                {{ transaction.user.address.state }},
-                {{ getCountryByCode(transaction.user.address.country) }},
-                {{ transaction.user.address.postal_code }}
+                {{ address }}
               </div>
             </div>
             <div class="details__item">
