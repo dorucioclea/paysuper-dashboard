@@ -69,6 +69,13 @@ export default {
 
   validations: {
     keyProductLocal: {
+      cover: {
+        images: {
+          en: {
+            required,
+          },
+        },
+      },
       name: {
         $each: {
           required,
