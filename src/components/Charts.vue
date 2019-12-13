@@ -180,7 +180,6 @@ export default {
 
   <ChartsLastPayments
     :countries="countries"
-    :currency="currency"
     :lastPayments="lastPayments"
     @fetchLastPayments="fetchLastPayments"
   />
