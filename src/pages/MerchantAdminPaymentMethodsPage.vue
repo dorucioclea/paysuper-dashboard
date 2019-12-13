@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { get } from 'lodash-es';
 import MerchantTariffStore from '@/store/MerchantTariffStore';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
@@ -17,11 +17,10 @@ export default {
       merchantId,
     );
   },
-
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts']),
-    ...mapGetters('Dictionaries', ['countries']),
+    ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts', 'isLoading']),
+    ...mapGetters('MerchantTariff', ['hasChanged']),
 
     homeRegion() {
       return get(this.merchant, 'tariff.home_region') || 'europe';
@@ -29,6 +28,14 @@ export default {
     payoutCurrency() {
       return get(this.merchant, 'banking.currency') || 'USD';
     },
+  },
+  methods: {
+    ...mapActions('MerchantTariff', [
+      'updateChannelCost',
+      'updateRefundCost',
+      'updateChargeback',
+      'save',
+    ]),
   },
 };
 </script>
@@ -50,8 +57,28 @@ export default {
     :channelCosts="channelCosts"
     :chargeback="chargeback"
     :refundCosts="refundCosts"
-    :countries="countries"
-  />
+    :isLoading="isLoading"
+    @updateChannelCost="updateChannelCost"
+    @updateRefundCost="updateRefundCost"
+    @updateChargeback="updateChargeback"
+  >
+    <div
+      slot="controls"
+      class="controls"
+    >
+      <UiButton
+        class="submit-button"
+        text="SAVE"
+        :disabled="!hasChanged"
+        @click="save"
+      >
+        <UiSimplePreloader
+          v-if="isLoading"
+          slot="iconBefore"
+        />
+      </UiButton>
+    </div>
+  </MerchantAdminFormPaymentMethods>
 </div>
 </template>
 
@@ -61,5 +88,12 @@ export default {
 }
 .text {
   width: 448px;
+}
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+.submit-button {
+  width: 140px;
 }
 </style>

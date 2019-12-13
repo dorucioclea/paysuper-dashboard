@@ -171,16 +171,16 @@ export default {
       return capitalize(startCase(status));
     },
 
-    async newPayout() {
+    newPayout() {
       const description = 'manual payout';
       this.setIsLoading(true);
-      try {
-        await this.createPayout(description).catch(this.$showErrorMessage);
-        this.successModal = true;
-      } catch (e) {
-        this.failModal = true;
-      }
-      this.setIsLoading(false);
+      this.createPayout(description)
+        .then(() => {
+          this.successModal = true;
+          this.filterPayouts();
+        })
+        .catch(this.$showErrorMessage)
+        .finally(() => this.setIsLoading(false));
     },
 
     async exportFile(fileType, id) {

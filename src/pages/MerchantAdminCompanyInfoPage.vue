@@ -146,7 +146,7 @@ export default {
       <div class="columns">
         <UiTextFieldReadonly
           label="Email"
-          :value="getEmailValue(get(merchant, 'contacts.authorized.email'))"
+          :value="getEmailValue(get(merchant, 'contacts.technical.email'))"
         />
       </div>
     </section>
