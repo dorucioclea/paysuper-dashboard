@@ -2,19 +2,7 @@
 import { get, find, merge } from 'lodash-es';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
-
-const COLORS = [
-  '#F44336',
-  '#FF9800',
-  '#FFEB3B',
-  '#8BC34A',
-  '#009688',
-  '#00BCD4',
-  '#03A9F4',
-  '#3F51B5',
-  '#795548',
-  '#E3E5E6',
-];
+import Colors from '@/schemes/paymentLinksColorsScheme';
 
 export default {
   name: 'ChartsPaylinkBase',
@@ -25,7 +13,7 @@ export default {
       type: Object,
     },
     countries: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
     currency: {
@@ -61,7 +49,7 @@ export default {
     },
     get,
     getColor(index) {
-      return COLORS[index];
+      return Colors[index];
     },
   },
 };

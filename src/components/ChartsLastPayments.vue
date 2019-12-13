@@ -5,7 +5,7 @@ export default {
   name: 'ChartsLastPayments',
   props: {
     countries: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
     currency: {
@@ -13,7 +13,7 @@ export default {
       type: String,
     },
     lastPayments: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
   },

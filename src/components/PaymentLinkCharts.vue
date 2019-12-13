@@ -5,19 +5,7 @@ import PaymentLinkChartsHeader from '@/components/PaymentLinkChartsHeader.vue';
 import ChartsPaylinkSummary from '@/components/ChartsPaylinkSummary.vue';
 import ChartsPaylinkBase from '@/components/ChartsPaylinkBase.vue';
 import ChartsPaylinkUtm from '@/components/ChartsPaylinkUtm.vue';
-
-const COLORS = [
-  '#F44336',
-  '#FF9800',
-  '#FFEB3B',
-  '#8BC34A',
-  '#009688',
-  '#00BCD4',
-  '#03A9F4',
-  '#3F51B5',
-  '#795548',
-  '#E3E5E6',
-];
+import Colors from '@/schemes/paymentLinksColorsScheme';
 
 export default {
   name: 'PaymentLinkCharts',
@@ -149,8 +137,8 @@ export default {
       }, { labels: [], data: [] });
 
       const colors = {
-        backgroundColor: map(chart.data, (chartItem, index) => COLORS[index]),
-        hoverBackgroundColor: map(chart.data, (chartItem, index) => COLORS[index]),
+        backgroundColor: map(chart.data, (chartItem, index) => Colors[index]),
+        hoverBackgroundColor: map(chart.data, (chartItem, index) => Colors[index]),
       };
 
       return {
@@ -179,7 +167,7 @@ export default {
 <div class="charts">
   <PaymentLinkChartsHeader
     :period="mainPeriod"
-    :filters="dateFilter"
+    :dateFilters="dateFilter"
     :title="title"
     @changePeriod="changePeriod"
     @setFilters="setFilters"

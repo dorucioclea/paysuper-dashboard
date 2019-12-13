@@ -50,10 +50,10 @@ export default {
     includes,
 
     getInclude(itemValue) {
-      const newItems = this.value
+      const list = this.value
         .filter(item => itemValue === item.id);
 
-      return newItems.length !== 0;
+      return list.length !== 0;
     },
 
     toggleItemSelected(itemValue) {

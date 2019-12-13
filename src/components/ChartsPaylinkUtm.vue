@@ -8,7 +8,7 @@ export default {
   name: 'ChartsPaylinkUtm',
   props: {
     countries: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
     currency: {
@@ -16,7 +16,7 @@ export default {
       type: String,
     },
     utmData: {
-      default: () => {},
+      default: () => ({}),
       type: Object,
     },
   },
@@ -29,8 +29,7 @@ export default {
 
   computed: {
     utmDataOrdered() {
-      const arr = this.utmData.top;
-      return sortBy(arr, ['utm.utm_source', 'utm.utm_medium', 'utm_campaign']);
+      return sortBy(this.utmData.top, ['utm.utm_source', 'utm.utm_medium', 'utm_campaign']);
     },
   },
   methods: {

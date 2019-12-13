@@ -1,4 +1,4 @@
-﻿import { filter } from 'lodash-es';
+import { filter } from 'lodash-es';
 
 export default function setStructureTreeUtm(utmDataOrdered) {
   const source = [];

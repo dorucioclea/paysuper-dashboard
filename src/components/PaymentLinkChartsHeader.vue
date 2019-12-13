@@ -1,18 +1,13 @@
 <script>
 export default {
   name: 'ChartsHeaderPaymentLink',
-  data() {
-    return {
-      dateFilters: [],
-    };
-  },
   props: {
     period: {
       default: 'current_month',
       type: String,
     },
-    filters: {
-      default: () => [],
+    dateFilters: {
+      default: () => ([]),
       type: Array,
     },
     title: {
@@ -31,10 +26,6 @@ export default {
         { label: 'Previous year', value: 'previous_year' },
       ];
     },
-  },
-
-  mounted() {
-    this.dateFilters = this.filters;
   },
 };
 </script>

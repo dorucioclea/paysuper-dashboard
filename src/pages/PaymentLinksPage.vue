@@ -6,7 +6,6 @@ import {
   isEqual, get,
 } from 'lodash-es';
 import moment from 'moment';
-import paymentLinksStatusScheme from '@/schemes/paymentLinksStatusScheme';
 import PaymentLinksListStore from '@/store/PaymentLinksListStore';
 import NoResults from '@/components/NoResults.vue';
 import PictureWebLines from '@/components/PictureWebLines.vue';
@@ -42,8 +41,6 @@ export default {
 
   data() {
     return {
-      filters: {},
-      scheme: paymentLinksStatusScheme,
       openedLinkId: null,
       isDeleteModalOpened: false,
       linkIdForAction: null,
@@ -51,43 +48,18 @@ export default {
   },
 
   computed: {
-    ...mapState('Links', ['linksList', 'filterValues', 'query', 'apiQuery']),
-    ...mapGetters('Links', ['getFilterValues']),
-
-    dateFilter: {
-      get() {
-        return [this.filters.dateFrom || null, this.filters.dateTo || null];
-      },
-      set(value) {
-        const [dateFrom, dateTo] = value;
-        this.filters.dateFrom = dateFrom;
-        this.filters.dateTo = dateTo;
-      },
-    },
-  },
-
-  created() {
-    this.updateFiltersFromQuery();
-  },
-
-  mounted() {
-    this.initInfiniteScroll();
+    ...mapState('Links', ['linksList']),
   },
 
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('Links', [
-      'initQuery',
       'createItem',
       'fetchLinks',
       'deleteLink',
     ]),
 
     get,
-
-    updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['dateFrom', 'dateTo', 'offset', 'limit', 'status']);
-    },
 
     filterLinks() {
       this.filters.offset = 0;
@@ -97,26 +69,9 @@ export default {
     async searchItems() {
       this.isSearchRouting = true;
       this.setIsLoading(true);
-      // this.submitFilters(this.filters);
       this.navigate();
       await this.fetchReports().catch(this.$showErrorMessage);
       this.setIsLoading(false);
-    },
-
-    initInfiniteScroll() {
-      this.$appEventsOn('contentScrollReachEnd', async () => {
-        if (
-          this.isInfiniteScrollLocked
-          || this.filters.offset + this.filters.limit >= this.linksList.count
-        ) {
-          return;
-        }
-        this.isInfiniteScrollLocked = true;
-
-        this.filters.offset += this.filters.limit;
-        await this.searchItems();
-        this.isInfiniteScrollLocked = false;
-      });
     },
 
     navigate() {
@@ -135,18 +90,6 @@ export default {
 
     getStatus(status) {
       return STATUS[status];
-    },
-
-    handleFilterInput(data) {
-      this.filters.status = [];
-
-      if (data === 'all') {
-        this.filters.status = [];
-      } else {
-        this.filters.status.push(data);
-      }
-
-      this.filterLinks();
     },
 
     formatDate(date) {
@@ -190,7 +133,7 @@ export default {
 
 <template>
   <div>
-    <UiPageHeaderFrame pictureGrow="0" class="picture">
+    <UiPageHeaderFrame :pictureGrow="false" class="picture">
       <template slot="title">
         Payment links
       </template>
