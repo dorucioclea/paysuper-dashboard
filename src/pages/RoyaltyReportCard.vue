@@ -170,7 +170,7 @@ export default {
             {{ getFormattedDate(report.period_to.seconds) }}
           </span>
         </div>
-         <UiLabelTag class="status" :color="colors[report.status]">
+        <UiLabelTag class="status" :color="colors[report.status]">
           {{ getStatus(report.status) }}
         </UiLabelTag>
       </span>

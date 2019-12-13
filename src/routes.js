@@ -161,6 +161,20 @@ const routes = [
     ],
   },
   {
+    path: '/payment-links/',
+    component: () => import('@/pages/PaymentLinksPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    name: 'PaymentLinksPage',
+  },
+  {
+    path: '/payment-links/:linkId/',
+    component: () => import('@/pages/PaymentLinksCard.vue'),
+    meta: {
+      layout: 'Layout', isAuthRequired: true,
+    },
+    name: 'PaymentLinksCard',
+  },
+  {
     path: '/taxes/',
     component: () => import('@/pages/TaxesListPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
