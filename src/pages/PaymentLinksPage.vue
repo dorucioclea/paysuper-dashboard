@@ -1,6 +1,6 @@
 <script>
 import {
-  mapState, mapGetters, mapActions,
+  mapState, mapActions,
 } from 'vuex';
 import {
   isEqual, get,

@@ -2,7 +2,7 @@
 import {
   get, find, sortBy,
 } from 'lodash-es';
-import setStructureTreeUtm from '../helpers/setStructureTreeUtm';
+import getStructureTreeUtm from '../helpers/getStructureTreeUtm';
 
 export default {
   name: 'ChartsPaylinkUtm',
@@ -47,7 +47,7 @@ export default {
   },
 
   mounted() {
-    const source = setStructureTreeUtm(this.utmDataOrdered);
+    const source = getStructureTreeUtm(this.utmDataOrdered);
 
     this.sourceList = source;
   },

@@ -1,4 +1,6 @@
 <script>
+import insureTimestampInMiliseconds from '@/helpers/insureTimestampInMiliseconds';
+
 export default {
   name: 'UiDate',
 
@@ -61,24 +63,11 @@ export default {
       if (this.value === null) {
         return null;
       }
-      return this.insureTimestampInMiliseconds(this.value);
+      return insureTimestampInMiliseconds(this.value);
     },
   },
 
   methods: {
-    insureTimestampInMiliseconds(timestamp) {
-      const { length } = String(timestamp);
-      if (!timestamp || (length !== 10 && length !== 10)) {
-        return null;
-      }
-
-      if (length === 10) {
-        return Number(timestamp) * 1000;
-      }
-
-      return Number(timestamp);
-    },
-
     handleChangeValue(value) {
       if (value === null) return;
       const formattedValue = Number((value / 1000).toFixed(0));

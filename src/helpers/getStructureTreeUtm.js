@@ -1,6 +1,6 @@
 import { filter } from 'lodash-es';
 
-export default function setStructureTreeUtm(utmDataOrdered) {
+export default function getStructureTreeUtm(utmDataOrdered) {
   const source = [];
   /* set source */
   utmDataOrdered.forEach((utmDataOrderedItem) => {
