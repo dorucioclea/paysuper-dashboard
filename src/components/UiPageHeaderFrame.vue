@@ -7,11 +7,6 @@ export default {
       type: Boolean,
     },
   },
-  computed: {
-    grow() {
-      return this.pictureGrow ? '1' : '0'
-    }
-  }
 };
 </script>
 
@@ -25,9 +20,7 @@ export default {
       <slot name="description"></slot>
     </p>
   </div>
-  <div class="header-picture"
-    :class="`grow_${grow}`"
-  >
+  <div :class="['header-picture', { '_grow': pictureGrow }]">
     <slot name="picture"></slot>
   </div>
 </header>
@@ -41,12 +34,12 @@ export default {
 .header-picture {
   display: none;
   justify-content: center;
-  &.grow_1 {
+  flex-grow: 0;
+
+  &._grow {
     flex-grow: 1;
   }
-  &.grow_0 {
-    flex-grow: 0;
-  }
+
   @media screen and (min-width: 768px) {
     display: flex;
   }

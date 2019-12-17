@@ -17,8 +17,8 @@ export default {
       return result;
     },
     $_PaymentMethodsTable_offChanged(dataList, activeFieldNames) {
-      activeFieldNames.map((name) => {
-        dataList.map((item) => {
+      (activeFieldNames || []).map((name) => {
+        (dataList || []).map((item) => {
           item[name].hasChanges = false;
           (item.items || []).map((child) => {
             child[name].hasChanges = false;

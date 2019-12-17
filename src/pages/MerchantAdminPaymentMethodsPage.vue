@@ -1,8 +1,9 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { get } from 'lodash-es';
+import { findKey, get } from 'lodash-es';
 import MerchantTariffStore from '@/store/MerchantTariffStore';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'MerchantAdminPaymentMethodPage',
@@ -22,6 +23,10 @@ export default {
     ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts', 'isLoading']),
     ...mapGetters('MerchantTariff', ['hasChanged']),
 
+    isPossibleChange() {
+      const status = Number(findKey(merchantStatusScheme, item => item.value === 'pending'));
+      return this.merchant.status === status;
+    },
     homeRegion() {
       return get(this.merchant, 'tariff.home_region') || 'europe';
     },
@@ -63,6 +68,7 @@ export default {
     @updateChargeback="updateChargeback"
   >
     <div
+      v-if="isPossibleChange"
       slot="controls"
       class="controls"
     >
