@@ -1,4 +1,4 @@
-﻿export default function insureTimestampInMiliseconds(timestamp) {
+export default function insureTimestampInMiliseconds(timestamp) {
   const { length } = String(timestamp);
   if (!timestamp || (length !== 10 && length !== 10)) {
     return null;
