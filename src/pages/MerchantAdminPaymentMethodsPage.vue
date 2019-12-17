@@ -22,6 +22,9 @@ export default {
     ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts', 'isLoading']),
     ...mapGetters('MerchantTariff', ['hasChanged']),
 
+    isPossibleChange() {
+      return this.merchant.status === 7;
+    },
     homeRegion() {
       return get(this.merchant, 'tariff.home_region') || 'europe';
     },
@@ -63,6 +66,7 @@ export default {
     @updateChargeback="updateChargeback"
   >
     <div
+      v-if="isPossibleChange"
       slot="controls"
       class="controls"
     >

@@ -101,7 +101,7 @@ export default function createMerchantStore() {
 
   return {
     state: () => ({
-      merchant: null,
+      merchant: mapDataApiToForm(),
       merchantOriginalCopy: null,
       onboardingCompleteStepsCount: 0,
       merchantStatus: 'draft',

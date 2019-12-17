@@ -48,6 +48,7 @@ $left-indent: 12px;
   padding: 24px 0 16px;
   position: relative;
   width: 100%;
+  word-break: break-word;
 }
 .input {
   background-color: $input-background-color;

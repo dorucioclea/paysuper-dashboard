@@ -9,9 +9,9 @@ export default {
   },
   computed: {
     grow() {
-      return this.pictureGrow ? '1' : '0'
-    }
-  }
+      return this.pictureGrow ? '1' : '0';
+    },
+  },
 };
 </script>
 
