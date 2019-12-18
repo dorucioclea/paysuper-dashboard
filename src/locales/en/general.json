@@ -17,6 +17,7 @@
     "minValue": "The value should not be less than %min%",
     "cover": "Upload cover"
   },
+  "backToDashboard": "Back to Dashboard",
   "orderID": "Order #",
   "account": "Account",
   "product": "Product",
