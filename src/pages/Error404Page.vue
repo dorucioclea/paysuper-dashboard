@@ -24,7 +24,7 @@ export default {
   },
   beforeDestroy() {
     if (this.canvas) {
-      this.canvas.deInit404();
+      this.canvas.destroy404();
     }
   },
   methods: {

@@ -475,10 +475,12 @@ function Wave(window) {
       waves[i].original.y = waves[i].y;
     }
   };
-  this.deInit404 = () => {
+  this.destroy404 = () => {
     window.cancelAnimationFrame(setTimeUpdate);
     window.clearTimeout(impulseTimeUpdate);
     window.clearTimeout(bubblesUpdate);
+
+    window.removeEventListener('resize', this.ResizeCanvas);
   };
 
   HTMLCanvasElement.prototype.getMousePosition = getMousePosition;
@@ -515,9 +517,7 @@ export default function init404(window, canvas, world) {
   const wave = new Wave(window);
   wave.Init(canvas, world);
 
-  window.addEventListener('resize', () => {
-    wave.ResizeCanvas(canvas, world);
-  });
+  window.addEventListener('resize', wave.ResizeCanvas(canvas, world));
 
   return wave;
 }
