@@ -18,6 +18,9 @@
     "cover": "Upload cover"
   },
   "backToDashboard": "Back to Dashboard",
+  "pageNotFound": "Page not found",
+  "pageNotFoundContact": "Contact support team",
+  "pageNotFoundDesc": "We couldn't find the page you're looking for. Check your link again for mistypes and try again or return to Dashboard.",
   "orderID": "Order #",
   "account": "Account",
   "product": "Product",
