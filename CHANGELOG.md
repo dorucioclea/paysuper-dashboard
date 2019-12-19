@@ -7,6 +7,6 @@ All notable changes to this project will be documented in this file.
 - Updated dependencies.
 
 ### Fixed
-- Fix an invalid data on the Dashboard page.
+- Fix invalid data on the Dashboard page.
 - Fix a payment currency in the Transactions log.
 - Fix resending an invitation to an already invited merchant.
