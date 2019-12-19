@@ -45,25 +45,12 @@ export default {
   },
 
   computed: {
-    ...mapState('TransactionPage', ['transaction', 'refunds']),
+    ...mapState('TransactionPage', ['transaction']),
     ...mapGetters('Dictionaries', ['countries']),
     ...mapGetters('User', ['userPermissions']),
 
     refundAvailable() {
-      const badStatus = [
-        'canceled',
-        'refunded',
-        'rejected',
-        'chargeback',
-      ];
-      return !badStatus.includes(this.transaction.status)
-        && !this.hasRefund
-        && this.userPermissions.cancelTransactions;
-    },
-
-    // the refund process has started
-    hasRefund() {
-      return !!this.refunds.items;
+      return this.transaction.refund_allowed && this.userPermissions.cancelTransactions;
     },
 
     address() {
@@ -130,15 +117,16 @@ export default {
         Transaction {{ transaction.transaction }}
       </template>
       <span slot="description">
-        <UiLabelTag :color="colors[transaction.status]">{{transaction.status}}</UiLabelTag>
+        <UiLabelTag :color="colors[transaction.status]">{{ transaction.status }}</UiLabelTag>
       </span>
       <UiButton
+        v-if="refundAvailable"
         slot="picture"
         color="blue"
         class="refund-button"
-        v-if="refundAvailable"
         :isTransparent="true"
-        @click="showRefundModal = true">
+        @click="showRefundModal = true"
+      >
         REFUND
       </UiButton>
 
@@ -147,7 +135,8 @@ export default {
     <TransactionRefund
       :showModal="showRefundModal"
       @close="showRefundModal = false"
-      @input="handleRefund($event)"></TransactionRefund>
+      @input="handleRefund($event)"
+    ></TransactionRefund>
 
     <UiPanel>
       <div class="details bordered">
@@ -256,7 +245,6 @@ export default {
               </div>
             </div>
 
-            <!-- refunds -->
             <div class="details__item" v-if="hasCurrency(transaction.refund_gross_revenue)">
               <div class="details__item--label">Refund Gross Revenue</div>
               <div class="details__item--info">
@@ -296,17 +284,20 @@ export default {
                 {{transaction.refund.reason}}
               </div>
             </div>
-            <div class="details__item"
-                 v-if="transaction.parent_order && transaction.parent_order !== null">
+            <div
+              v-if="transaction.parent_order && transaction.parent_order !== null"
+              class="details__item"
+            >
               <div class="details__item--label">Original transaction</div>
               <div class="details__item--info">
-                <router-link
+                <RouterLink
                   :to="{
                     name: 'TransactionsCard',
                     params: {transactionId: transaction.parent_order.uuid}
-                    }">
+                  }"
+                >
                   {{transaction.parent_order.uuid}}
-                </router-link>
+                </RouterLink>
               </div>
             </div>
           </div>
@@ -382,8 +373,10 @@ export default {
 
       </div>
 
-      <div class="details bordered"
-           v-if="transaction.payment_method && transaction.payment_method.card">
+      <div
+        v-if="transaction.payment_method && transaction.payment_method.card"
+        class="details bordered"
+      >
         <UiHeader level="3" class="details__header">Payment details</UiHeader>
         <div class="details__container">
           <div class="details__column">
