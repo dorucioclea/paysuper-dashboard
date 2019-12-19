@@ -1,10 +1,20 @@
 <script>
 import { directive as clickaway } from 'vue-clickaway';
+import { includes } from 'lodash-es';
 import locales from '@/locales/scheme';
 
 export default {
   directives: {
     clickaway,
+  },
+  props: {
+    listColor: {
+      default: 'transparent',
+      type: String,
+      validator(val) {
+        return includes(['transparent', 'white'], val);
+      },
+    },
   },
   data() {
     return {
@@ -27,7 +37,6 @@ export default {
         this.show();
       }
     },
-
     changeLocale(locale) {
       this.$i18n.locale = locale;
     },
@@ -52,7 +61,7 @@ export default {
     {{ $i18n.locale }}
   </span>
   <div
-    class="langs-list"
+    :class="['langs-list', `_${listColor}`]"
     @click="hide"
   >
     <div
@@ -115,6 +124,10 @@ $hover-background-color: rgba($hover-text-color, 0.1);
   top: calc(100% + 10px);
   width: 180px;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+
+  &._white {
+    background-color: #fff;
+  }
 
   .locale-switcher._opened & {
     pointer-events: auto;
