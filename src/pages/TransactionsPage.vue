@@ -185,16 +185,6 @@ export default {
       return STATUS_COLOR[status];
     },
 
-    refundAvailable(status) {
-      const badStatus = [
-        'canceled',
-        'refunded',
-        'rejected',
-        'chargeback',
-      ];
-      return !badStatus.includes(status);
-    },
-
     handleStatusInput(data) {
       if (data === 'all') {
         this.filters.status = [];
@@ -276,17 +266,19 @@ export default {
             @input="filterTransactions"
           />
           <UiStatusFilter
-            @input="handleStatusInput"
-            @inputSecondLevel="handleFilterInput"
             :value="filters"
             :scheme="scheme"
-            :countsByStatus="filterCounts" />
+            :countsByStatus="filterCounts"
+            @input="handleStatusInput"
+            @inputSecondLevel="handleFilterInput"
+          />
         </div>
 
         <div class="control-bar__right">
           <div class="export-button"
+            v-if="transactionsList.items.length"
             @click="showExportModal = !showExportModal"
-            v-if="transactionsList.items.length">
+          >
             <IconDownload/>
           </div>
         </div>
@@ -308,11 +300,13 @@ export default {
             class="transaction"
             v-for="(transaction, index) in transactionsList.items"
             :key="index"
-            :link="`/transactions/${transaction.uuid}`">
+            :link="`/transactions/${transaction.uuid}`"
+          >
             <UiTableCell align="left" class="status">
-              <div class="status-dot"
-                   :class="getColor(transaction.status)"
-                   :title="transaction.status"></div>
+              <div
+                :class="['status-dot', getColor(transaction.status)]"
+                :title="transaction.status"
+              ></div>
               {{ transaction.project.name.en }}
             </UiTableCell>
             <UiTableCell align="left">{{ getProductName(transaction.items) }}</UiTableCell>
@@ -331,9 +325,11 @@ export default {
               {{$formatPrice(transaction.total_payment_amount, transaction.currency)}}
             </UiTableCell>
             <UiTableCell align="left" v-if="userPermissions.cancelTransactions">
-              <div class="transaction__refund"
-                   v-if="refundAvailable(transaction.status)"
-                   @click.stop.prevent="showRefundModal = true, currentTransaction = transaction">
+              <div
+                v-if="transaction.refund_allowed"
+                class="transaction__refund"
+                @click.stop.prevent="showRefundModal = true, currentTransaction = transaction"
+              >
                 <IconRetry/>
                 <UiTip
                   width="140px"
@@ -345,7 +341,6 @@ export default {
                   Request for refund
                 </UiTip>
               </div>
-
             </UiTableCell>
           </UiTableRow>
         </UiTable>
@@ -357,14 +352,15 @@ export default {
     <TransactionRefund
       :showModal="showRefundModal"
       @close="showRefundModal = false"
-      @input="handleRefund($event)"></TransactionRefund>
+      @input="handleRefund($event)"
+    ></TransactionRefund>
 
     <ExportModal
       title="Export list of transactions per period"
       v-show="showExportModal"
       @export="exportFile"
       @close="showExportModal = false"
-      />
+    />
   </div>
 </template>
 
