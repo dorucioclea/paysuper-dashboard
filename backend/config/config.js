@@ -37,11 +37,6 @@ const config = {
   s3SecretAccessKey: getEnvVariable('S3_SECRET_ACCESS_KEY'),
   s3BucketName: getEnvVariable('S3_BUCKET_NAME'),
   s3Region: getEnvVariable('S3_REGION'),
-
-  paysuperFormUrl: getEnvVariable(
-    'PAYSUPER_PAYMENT_FORM_URL',
-    'https://cdn.pay.super.com/payform/dev/paysuper-form.js',
-  ),
 };
 
 module.exports = config;

@@ -308,10 +308,6 @@ const routes = [
     name: 'payoutCard',
   },
   {
-    path: '/demo/',
-    component: () => import('@/pages/demo.vue'),
-  },
-  {
     path: '/docs/',
     component: () => import('@/pages/docs.vue'),
   },
@@ -344,18 +340,6 @@ const routes = [
     name: 'Logout',
   },
   {
-    path: '/form-demo/',
-    component: () => import('@/pages/DemoShopPage.vue'),
-    meta: { layout: 'PageShallow', initStore: ['config'] },
-    name: 'DemoShop',
-  },
-  {
-    path: '/payform-sdk/',
-    component: () => import('@/pages/PaymentFormSdk.vue'),
-    meta: { layout: 'PageShallow', initStore: ['config'] },
-    name: 'PaymentFormSdk',
-  },
-  {
     path: '/profile/',
     component: () => import('@/pages/UserProfilePage.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true, primaryOnboardingStep: 'profile' },
@@ -381,11 +365,6 @@ const routes = [
   {
     path: '/confirm_email/',
     component: () => import('@/pages/ConfirmEmailPage.vue'),
-    meta: { initStore: ['config'] },
-  },
-  {
-    path: '/receipt/:receiptType/:receiptId/:orderId',
-    component: () => import('@/pages/PaymentReceiptPage.vue'),
     meta: { initStore: ['config'] },
   },
   {
