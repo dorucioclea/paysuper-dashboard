@@ -202,7 +202,7 @@ export default {
       />
     </div>
 
-    <div class="section">
+    <div class="section" v-if="projectLocal.vat_payer !== 'nobody'">
       <UiHeader
         :hasMargin="true"
         level="3"
