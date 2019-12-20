@@ -67,7 +67,7 @@ const routes = [
   },
   {
     path: '/transactions/:transactionId',
-    component: () => import('@/pages/TransactionCard.vue'),
+    component: () => import('@/pages/TransactionCardPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
     name: 'TransactionsCard',
   },
