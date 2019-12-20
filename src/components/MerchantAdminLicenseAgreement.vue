@@ -138,6 +138,41 @@ export default {
 
 <template>
 <UiPanel>
+  <section class="section">
+    <UiHeader level="3" :hasMargin="true">
+      Status
+    </UiHeader>
+    <UiText>
+      Choose the actual status for every step of onboarding procedure.
+      Merchant will get different notifications depending on the LA request status.
+    </UiText>
+    <div
+      v-if="merchantStatus === 'new'"
+      class="no-agreement"
+    >
+      No agreement
+    </div>
+    <template v-else>
+      <UiSelectAsButton
+        v-if="statuses.length > 1"
+        tipInnerPosition="left"
+        textColor="white"
+        :color="actualStatus.color"
+        :isRounded="true"
+        :options="statuses"
+        :value="newStatus"
+        @input="openChangeStatusModal"
+      />
+      <UiButton
+        v-else
+        size="small"
+        :color="actualStatus.color"
+        :isRounded="true"
+      >
+        {{ actualStatus.label }}
+      </UiButton>
+    </template>
+  </section>
   <section
     v-if="hasSignature"
     class="section"
@@ -217,41 +252,6 @@ export default {
         {{ item.label }}
       </UiRadio>
     </div>
-  </section>
-  <section class="section">
-    <UiHeader level="3" :hasMargin="true">
-      Status
-    </UiHeader>
-    <UiText>
-      Choose the actual status for every step of onboarding procedure.
-      Merchant will get different notifications depending on the LA request status.
-    </UiText>
-    <div
-      v-if="merchantStatus === 'new'"
-      class="no-agreement"
-    >
-      No agreement
-    </div>
-    <template v-else>
-      <UiSelectAsButton
-        v-if="statuses.length > 1"
-        tipInnerPosition="left"
-        textColor="white"
-        :color="actualStatus.color"
-        :isRounded="true"
-        :options="statuses"
-        :value="newStatus"
-        @input="openChangeStatusModal"
-      />
-      <UiButton
-        v-else
-        size="small"
-        :color="actualStatus.color"
-        :isRounded="true"
-      >
-        {{ actualStatus.label }}
-      </UiButton>
-    </template>
   </section>
   <section class="footer">
     <div

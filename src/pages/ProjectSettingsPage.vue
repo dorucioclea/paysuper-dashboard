@@ -17,6 +17,16 @@ export default {
   data() {
     return {
       projectLocal: null,
+      vatPayerOptions: [
+        {
+          label: 'VAT not included in price',
+          value: 'buyer',
+        },
+        {
+          label: 'VAT included in price',
+          value: 'seller',
+        },
+      ],
     };
   },
 
@@ -192,6 +202,31 @@ export default {
       />
     </div>
 
+    <div class="section">
+      <UiHeader
+        :hasMargin="true"
+        level="3"
+      >
+        VAT collection mode
+      </UiHeader>
+      <UiText indentBottom="small">
+        By default VAT is not included in price and your customer will see product price and
+        VAT amount separately in their payment form and receipt.
+        Choose «<span class="bold">VAT included in price</span>» option if you want
+        to show final prices with VAT already included.
+      </UiText>
+
+      <UiRadio
+        class="radio"
+        v-for="item in vatPayerOptions"
+        :key="item.value"
+        :value="item.value"
+        v-model="projectLocal.vat_payer"
+      >
+        {{ item.label }}
+      </UiRadio>
+    </div>
+
     <div class="controls" v-if="!viewOnly">
       <UiButton
         :disabled="$v.projectLocal.$invalid"
@@ -231,5 +266,11 @@ export default {
 
 .submit-button {
   width: 140px;
+}
+
+.radio {
+  & + & {
+    margin-top: 6px;
+  }
 }
 </style>
