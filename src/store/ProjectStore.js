@@ -32,6 +32,7 @@ function mapDataApiToForm(data, { langFields, defaultCurrency }) {
       defaultCurrency,
     ],
     callback_protocol: 'empty',
+    vat_payer: 'buyer',
   }, data);
 
   if (!find(mergedData.currencies, defaultCurrency)) {

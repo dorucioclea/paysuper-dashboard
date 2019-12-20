@@ -14,7 +14,4 @@ server {
     location ~* ^/conf(.*)$ {
         proxy_pass ${APP};
     }
-    location ~* ^/order(.*)$ {
-        proxy_pass ${APP};
-    }
 }
