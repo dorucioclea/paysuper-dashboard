@@ -242,7 +242,7 @@ export default {
           <UiTableRow :isHead="true">
             <UiTableCell align="left">Period</UiTableCell>
             <UiTableCell align="left">Report date</UiTableCell>
-            <UiTableCell align="left">Payout ID</UiTableCell>
+            <UiTableCell align="left">Royalty report ID</UiTableCell>
             <UiTableCell align="left">Payment date</UiTableCell>
             <UiTableCell align="left">Amount</UiTableCell>
           </UiTableRow>
@@ -261,7 +261,7 @@ export default {
               {{ getFormattedDate(report.created_at.seconds) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ getValue(report, 'payout_document_id') }}
+              {{ getValue(report, 'id') }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ getFormattedDate(report.payout_date.seconds) }}
