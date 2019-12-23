@@ -1,6 +1,6 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { required } from 'vuelidate/lib/validators';
+import { required, maxLength } from 'vuelidate/lib/validators';
 import { find, cloneDeep, debounce } from 'lodash-es';
 import { OpenFileDialog } from '@/helpers/uploader';
 import ProjectKeyProductStore from '@/store/ProjectKeyProductStore';
@@ -48,6 +48,7 @@ export default {
           name: 'Steam recommended prices',
         },
       ],
+      isPricesBlockPresent: false,
     };
   },
 
@@ -65,6 +66,11 @@ export default {
       const platform = find(this.keyProductLocal.platforms, { id: this.platformIdForDisable });
       return platform ? platform.name : '';
     },
+
+    isSaveButtonDisabled() {
+      const isPricesInvalid = this.isPricesBlockPresent ? this.$refs.pricesBlock.isInvalid : false;
+      return this.$v.keyProductLocal.$invalid || isPricesInvalid;
+    },
   },
 
   validations: {
@@ -79,15 +85,18 @@ export default {
       name: {
         $each: {
           required,
+          maxLength: maxLength(50),
         },
       },
       description: {
         $each: {
           required,
+          maxLength: maxLength(500),
         },
       },
       sku: {
         required,
+        maxLength: maxLength(20),
         uniqueSku() {
           return this.isSkuUnique;
         },
@@ -193,15 +202,6 @@ export default {
     },
 
     async handleKeyProductSave() {
-      this.$v.$touch();
-      let isPricesValid = true;
-      if (this.$refs.pricesBlock) {
-        isPricesValid = this.$refs.pricesBlock.checkIsValid();
-      }
-      if (this.$v.$invalid || !isPricesValid) {
-        this.$showErrorMessage('The form is not filled right');
-        return;
-      }
       this.setIsLoading(true);
       try {
         if (this.keyProductId) {
@@ -223,6 +223,9 @@ export default {
 
     handleSkuFieldInput: debounce(
       async function handleSkuFieldInput(value) {
+        if (!value) {
+          return;
+        }
         this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
         this.$v.keyProductLocal.sku.$touch();
       },
@@ -272,6 +275,7 @@ export default {
         v-bind="$getValidatedEachFieldProps(
         'keyProductLocal.name',
          Object.keys(keyProductLocal.name))"
+        @blur="$v.keyProductLocal.name.$each.$touch()"
       />
       <UiLangTextField
         label="Description"
@@ -280,6 +284,7 @@ export default {
         v-bind="$getValidatedEachFieldProps(
         'keyProductLocal.description',
          Object.keys(keyProductLocal.description))"
+        @blur="$v.keyProductLocal.description.$each.$touch()"
       />
       <UiTextField
         label="SKU"
@@ -287,6 +292,7 @@ export default {
         v-model="keyProductLocal.sku"
         :disabled="(keyProductId && !!keyProductLocal.sku) || viewOnly"
         @input="handleSkuFieldInput"
+        @blur="$v.keyProductLocal.sku.$touch()"
       />
     </section>
 
@@ -327,6 +333,8 @@ export default {
         :defaultCurrency="defaultCurrency"
         :recommendedPricesTable="recommendedPricesTable"
         :disabled="viewOnly"
+        @hook:mounted="isPricesBlockPresent = true"
+        @hook:destroyed="isPricesBlockPresent = false"
       />
 
     </section>
@@ -352,7 +360,7 @@ export default {
       <UiUploadControls
         v-if="!viewOnly"
         :disabled="keyProductId === null"
-        :isFilled="keyCounts[platform.id]"
+        :isFilled="!!keyCounts[platform.id]"
         title="keys"
       />
     </div>
@@ -362,7 +370,7 @@ export default {
         Enable package
       </UiSwitchBox>
       <UiButton
-        :disabled="$v.keyProductLocal.$invalid"
+        :disabled="isSaveButtonDisabled"
         class="submit-button"
         text="SAVE"
         @click="handleKeyProductSave"

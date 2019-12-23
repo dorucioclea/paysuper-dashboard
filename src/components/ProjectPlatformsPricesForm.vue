@@ -1,6 +1,5 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
-import { findKey } from 'lodash-es';
 import { getCurrencyValueFromItem } from '@/helpers/currencyDataConversion';
 import ProjectEntityPricesForm from '@/components/ProjectEntityPricesForm.vue';
 
@@ -74,6 +73,10 @@ export default {
         };
       });
     },
+
+    isInvalid() {
+      return this.$v.$invalid || this.$refs.pricesBlock.isInvalid;
+    },
   },
 
   watch: {
@@ -102,17 +105,6 @@ export default {
   },
 
   methods: {
-    checkIsValid() {
-      this.$v.$touch();
-      this.$refs.pricesBlock.checkIsValid();
-
-      const index = findKey(this.$v.platforms.$each.$iter, { $invalid: true });
-      if (index) {
-        this.currentPlatformPricingIndex = Number(index);
-      }
-      return !this.$v.$invalid;
-    },
-
     getPriceId(item) {
       return getCurrencyValueFromItem(item);
     },
