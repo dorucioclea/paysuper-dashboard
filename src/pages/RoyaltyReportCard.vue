@@ -141,7 +141,7 @@ export default {
       this.setIsLoading(true);
       await this.createReportFile({
         file_type: fileType.toLowerCase(),
-        report_type: 'royalty',
+        report_type: this.currentTab === 0 ? 'royalty' : 'royalty_transactions',
         params: {
           id: this.report.id,
         },
@@ -170,7 +170,7 @@ export default {
             {{ getFormattedDate(report.period_to.seconds) }}
           </span>
         </div>
-         <UiLabelTag class="status" :color="colors[report.status]">
+        <UiLabelTag class="status" :color="colors[report.status]">
           {{ getStatus(report.status) }}
         </UiLabelTag>
       </span>

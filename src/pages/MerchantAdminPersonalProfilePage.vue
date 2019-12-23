@@ -11,7 +11,11 @@ export default {
   },
   async asyncData({ store, registerStoreModule }) {
     try {
-      await registerStoreModule('MerchantProfile', MerchantProfileStore);
+      const merchant = await store.dispatch('Merchant/getAsyncMerchant');
+      const profileId = get(merchant, 'user.profile_id', '');
+      await registerStoreModule('MerchantProfile', MerchantProfileStore, {
+        profileId,
+      });
     } catch (error) {
       store.dispatch('setPageError', error);
     }
@@ -42,7 +46,6 @@ export default {
   },
   computed: {
     ...mapState('MerchantProfile', ['profile']),
-    ...mapState('Merchant', ['merchant']),
 
     helpText() {
       const checkedItems = omitBy(this.profile.help, item => !item);
@@ -51,6 +54,9 @@ export default {
     },
 
     websiteText() {
+      if (!this.profile.company.website) {
+        return '';
+      }
       return `<a 
         target="_blank" 
         href="${this.profile.company.website}
@@ -72,9 +78,6 @@ export default {
       const { from, to } = this.profile.company.number_of_employees;
       return this.employeesNumberOptions[`${from}-${to}`];
     },
-  },
-  async created() {
-    await this.fetchProfile(get(this.merchant, 'user.profile_id', ''));
   },
   methods: {
     ...mapActions('MerchantProfile', ['fetchProfile']),

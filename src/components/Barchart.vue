@@ -3,6 +3,10 @@ import Chart from '@/helpers/roundedBarCharts';
 
 export default {
   props: {
+    type: {
+      default: 'roundedBar',
+      type: String,
+    },
     data: {
       default: () => ({}),
       type: Object,
@@ -24,7 +28,7 @@ export default {
     createChart() {
       const ctx = this.$refs.chart;
       this.chart = new Chart(ctx, {
-        type: 'roundedBar',
+        type: this.type,
         data: this.data,
         options: this.options,
       });

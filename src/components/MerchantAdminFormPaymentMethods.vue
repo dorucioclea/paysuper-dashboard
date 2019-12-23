@@ -31,9 +31,9 @@ export default {
       required: true,
       type: Object,
     },
-    countries: {
-      required: true,
-      type: Array,
+    isLoading: {
+      default: false,
+      type: Boolean,
     },
   },
   computed: {
@@ -84,7 +84,8 @@ export default {
 
       <MerchantAdminChannelCostsTable
         :channelCosts="channelCosts"
-        :countries="countries"
+        :isUpdating="isLoading"
+        @changeCell="$emit('updateChannelCost', $event)"
       />
     </section>
 
@@ -96,7 +97,8 @@ export default {
 
       <MerchantAdminRefundCostsTable
         :refundCosts="refundCosts"
-        :countries="countries"
+        :isUpdating="isLoading"
+        @changeCell="$emit('updateRefundCost', $event)"
       />
     </section>
 
@@ -108,18 +110,12 @@ export default {
       </UiText>
       <MerchantAdminChargebackTable
         :chargeback="chargeback"
-        :countries="countries"
+        :isUpdating="isLoading"
+        @changeCell="$emit('updateChargeback', $event)"
       />
     </section>
 
-    <div class="controls">
-      <UiButton
-        class="submit-button"
-        text="SAVE"
-        :disabled="true"
-        @click="$emit('submitForms')"
-      />
-    </div>
+    <slot name="controls" />
   </UiPanel>
 </div>
 </template>
@@ -163,12 +159,5 @@ export default {
 }
 .section {
   margin-bottom: 40px;
-}
-.controls {
-  display: flex;
-  justify-content: flex-end;
-}
-.submit-button {
-  width: 140px;
 }
 </style>

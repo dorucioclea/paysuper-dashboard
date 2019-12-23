@@ -25,12 +25,22 @@ export default function getMainNavItems(permissions, {
       isHidden: hideToAdmin,
     },
     {
+      additional: 'Payment links',
+      unavailableReason: 'Links for quick products sale',
+      icon: 'IconBlank',
+      link: '/payment-links',
+      title: 'Payment links',
+      routeNames: ['PaymentLinksPage'],
+      isAvailable: permissions.viewProjects && hasDefaultCurrency,
+      isHidden: hideToAdmin,
+    },
+    {
       additional: 'Weekly royalty reports',
       icon: 'IconBlank',
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: permissions.viewRoyaltyReports && stepsCount === 5,
+      isAvailable: permissions.viewRoyaltyReports && stepsCount >= 5,
       isHidden: hideToAdmin,
     },
     {
@@ -39,7 +49,7 @@ export default function getMainNavItems(permissions, {
       link: '/payouts',
       title: 'Payouts',
       routeNames: ['payouts', 'payoutCard'],
-      isAvailable: permissions.viewPayouts && stepsCount === 5,
+      isAvailable: permissions.viewPayouts && stepsCount >= 5,
       isHidden: hideToAdmin,
     },
     {
@@ -48,7 +58,7 @@ export default function getMainNavItems(permissions, {
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: permissions.viewTransactions && stepsCount === 5,
+      isAvailable: permissions.viewTransactions && stepsCount >= 5,
       isHidden: hideToAdmin,
     },
     {

@@ -1,23 +1,29 @@
 import axios from 'axios';
-import { camelCase, reduce, snakeCase } from 'lodash-es';
+import {
+  get, camelCase, reduce, snakeCase,
+} from 'lodash-es';
+
+function getDefaultAccountInfo() {
+  return {
+    address: '',
+    address_additional: '',
+    alternative_name: '',
+    city: '',
+    country: '',
+    name: '',
+    registration_number: '',
+    state: '',
+    tax_id: '',
+    website: '',
+    zip: '',
+  };
+}
 
 export default function createAccountInfoStore() {
   return {
     namespaced: true,
     state: {
-      accountInfo: {
-        address: '',
-        address_additional: '',
-        alternative_name: '',
-        city: '',
-        country: '',
-        name: '',
-        registration_number: '',
-        state: '',
-        tax_id: '',
-        website: '',
-        zip: '',
-      },
+      accountInfo: getDefaultAccountInfo(),
     },
     getters: {
       accountInfo(state) {
@@ -31,16 +37,24 @@ export default function createAccountInfoStore() {
     },
     mutations: {
       accountInfo(state, data) {
-        state.accountInfo = data;
+        state.accountInfo = {
+          ...getDefaultAccountInfo(),
+          ...data,
+        };
       },
     },
     actions: {
       async initState({ commit, rootState }) {
-        const { company } = rootState.User.Merchant.merchant;
+        const merchantCompany = get(rootState, 'User.Merchant.merchant.company', {});
+        const profileCompany = get(rootState, 'User.Profile.profile.company', {});
 
-        if (company) {
-          commit('accountInfo', company);
-        }
+        const accountInfo = {
+          ...merchantCompany,
+          alternative_name: merchantCompany.alternative_name || profileCompany.company_name,
+          website: merchantCompany.website || profileCompany.website,
+        };
+
+        commit('accountInfo', accountInfo);
       },
       async submitAccountInfo({ dispatch, state, rootState }) {
         const response = await axios.put(

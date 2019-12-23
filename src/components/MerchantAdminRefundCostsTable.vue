@@ -1,5 +1,5 @@
 <script>
-import { map, tail } from 'lodash-es';
+import { find, map, tail } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
@@ -21,6 +21,10 @@ export default {
     refundCosts: {
       required: true,
       type: Object,
+    },
+    isUpdating: {
+      default: false,
+      type: Boolean,
     },
   },
 
@@ -68,6 +72,29 @@ export default {
       }
       data.payoutParty = item;
       data.isPayoutPartyMenuOpened = false;
+
+      this.$emit('changeCell', {
+        ...find(this.refundCosts[data.method], { id: data.id }),
+        payoutParty: item,
+      });
+    },
+    changeCell(field, data, value) {
+      this.$_PaymentMethodsTable_handleCellChange(data[field], value);
+      this.$emit('changeCell', {
+        ...find(this.refundCosts[data.method], { id: data.id }),
+        [field]: value,
+      });
+    },
+  },
+
+  watch: {
+    isUpdating: {
+      handler(value) {
+        if (!value) {
+          this.$_PaymentMethodsTable_offChanged(this.innerRefundCosts, this.activeFieldNames);
+        }
+      },
+      immediate: true,
     },
   },
 };
@@ -105,15 +132,17 @@ export default {
           {{ data.method }}
         </ExpandableCellText>
       </UiComplexTableCell>
-      <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
-      <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
+      <UiComplexTableCell class="cell _currency">
+        {{ data.payoutCurrencySymbol }}
+      </UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">{{ data.regionAbbr }}</UiComplexTableCell>
       <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.methodFee)"
         @toggleFocus="data.methodFee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'methodFee', $event)"
-        @change="$_PaymentMethodsTable_handleCellChange(data.methodFee, $event)"
-        mask="###"
+        @change="changeCell('methodFee', data, $event)"
+        mask="#.######"
       >
         {{ $_PaymentMethodsTable_getCellText(data.methodFee.value, '%') }}
       </UiComplexTableCell>
@@ -122,10 +151,10 @@ export default {
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
         @toggleFocus="data.fixedFee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'fixedFee', $event)"
-        @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
-        mask="NNNNNN"
+        @change="changeCell('fixedFee', data, $event)"
+        mask="#.##"
       >
-        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrency) }}
+        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrencySymbol) }}
       </UiComplexTableCell>
       <UiComplexTableCell
         class="cell _payout-party"

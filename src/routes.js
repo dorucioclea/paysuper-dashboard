@@ -67,7 +67,7 @@ const routes = [
   },
   {
     path: '/transactions/:transactionId',
-    component: () => import('@/pages/TransactionCard.vue'),
+    component: () => import('@/pages/TransactionCardPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
     name: 'TransactionsCard',
   },
@@ -159,6 +159,20 @@ const routes = [
         name: 'ProjectPaymentForm',
       },
     ],
+  },
+  {
+    path: '/payment-links/',
+    component: () => import('@/pages/PaymentLinksPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    name: 'PaymentLinksPage',
+  },
+  {
+    path: '/payment-links/:linkId/',
+    component: () => import('@/pages/PaymentLinksCard.vue'),
+    meta: {
+      layout: 'Layout', isAuthRequired: true,
+    },
+    name: 'PaymentLinksCard',
   },
   {
     path: '/taxes/',
@@ -294,10 +308,6 @@ const routes = [
     name: 'payoutCard',
   },
   {
-    path: '/demo/',
-    component: () => import('@/pages/demo.vue'),
-  },
-  {
     path: '/docs/',
     component: () => import('@/pages/docs.vue'),
   },
@@ -330,18 +340,6 @@ const routes = [
     name: 'Logout',
   },
   {
-    path: '/form-demo/',
-    component: () => import('@/pages/DemoShopPage.vue'),
-    meta: { layout: 'PageShallow', initStore: ['config'] },
-    name: 'DemoShop',
-  },
-  {
-    path: '/payform-sdk/',
-    component: () => import('@/pages/PaymentFormSdk.vue'),
-    meta: { layout: 'PageShallow', initStore: ['config'] },
-    name: 'PaymentFormSdk',
-  },
-  {
     path: '/profile/',
     component: () => import('@/pages/UserProfilePage.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true, primaryOnboardingStep: 'profile' },
@@ -367,11 +365,6 @@ const routes = [
   {
     path: '/confirm_email/',
     component: () => import('@/pages/ConfirmEmailPage.vue'),
-    meta: { initStore: ['config'] },
-  },
-  {
-    path: '/receipt/:receiptType/:receiptId/:orderId',
-    component: () => import('@/pages/PaymentReceiptPage.vue'),
     meta: { initStore: ['config'] },
   },
   {

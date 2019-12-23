@@ -97,9 +97,11 @@ function getDefaultAgreementDocument() {
 }
 
 export default function createMerchantStore() {
+  let merchantRequest = null;
+
   return {
     state: () => ({
-      merchant: null,
+      merchant: mapDataApiToForm(),
       merchantOriginalCopy: null,
       onboardingCompleteStepsCount: 0,
       merchantStatus: 'draft',
@@ -171,10 +173,18 @@ export default function createMerchantStore() {
       },
 
       async fetchMerchantById({ commit }, id) {
-        const response = await axios.get(`{apiUrl}/system/api/v1/merchants/${id}`)
-          .catch(error => console.warn(error));
+        merchantRequest = new Promise(async (resolve) => {
+          const response = await axios.get(`{apiUrl}/system/api/v1/merchants/${id}`)
+            .catch(error => console.warn(error));
 
-        commit('merchant', mapDataApiToForm(get(response, 'data', {})));
+          const merchant = mapDataApiToForm(get(response, 'data', {}));
+          commit('merchant', merchant);
+          resolve(merchant);
+        });
+      },
+
+      getAsyncMerchant() {
+        return merchantRequest;
       },
 
       closeCompleteShown({ commit }) {

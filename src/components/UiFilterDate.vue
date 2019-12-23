@@ -1,4 +1,6 @@
 <script>
+import insureTimestampInMiliseconds from '@/helpers/insureTimestampInMiliseconds';
+
 export default {
   name: 'UiFilterDate',
 
@@ -20,24 +22,11 @@ export default {
         return [null, null];
       }
 
-      return this.value.map(item => this.insureTimestampInMiliseconds(item));
+      return this.value.map(item => insureTimestampInMiliseconds(item));
     },
   },
 
   methods: {
-    insureTimestampInMiliseconds(timestamp) {
-      const { length } = String(timestamp);
-      if (!timestamp || (length !== 10 && length !== 10)) {
-        return null;
-      }
-
-      if (length === 10) {
-        return Number(timestamp) * 1000;
-      }
-
-      return Number(timestamp);
-    },
-
     handleChangeValue(value) {
       const formattedValue = value.map((item) => {
         if (!item) {

@@ -1,6 +1,12 @@
 <script>
 export default {
   name: 'UiPageHeaderFrame',
+  props: {
+    pictureGrow: {
+      default: true,
+      type: Boolean,
+    },
+  },
 };
 </script>
 
@@ -14,7 +20,7 @@ export default {
       <slot name="description"></slot>
     </p>
   </div>
-  <div class="header-picture">
+  <div :class="['header-picture', { '_grow': pictureGrow }]">
     <slot name="picture"></slot>
   </div>
 </header>
@@ -27,8 +33,12 @@ export default {
 }
 .header-picture {
   display: none;
-  flex-grow: 1;
   justify-content: center;
+  flex-grow: 0;
+
+  &._grow {
+    flex-grow: 1;
+  }
 
   @media screen and (min-width: 768px) {
     display: flex;

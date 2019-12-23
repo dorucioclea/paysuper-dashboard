@@ -109,7 +109,7 @@ export default function createPayoutsStore() {
         commit('balance', data);
       },
 
-      async createPayout(description) {
+      async createPayout(ctx, description) {
         await axios.post(
           '{apiUrl}/admin/api/v1/payout_documents', { description },
         );

@@ -5,11 +5,11 @@ export default {
   name: 'ChartsLastPayments',
   props: {
     countries: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
     lastPayments: {
-      default: () => [],
+      default: () => ([]),
       type: Array,
     },
   },
