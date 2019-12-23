@@ -43,6 +43,7 @@ export default {
           value: 'virtual',
         },
       ],
+      isPricesBlockPresent: false,
     };
   },
 
@@ -98,6 +99,11 @@ export default {
           },
         ];
       },
+    },
+
+    isSaveButtonDisabled() {
+      const isPricesInvalid = this.isPricesBlockPresent ? this.$refs.pricesBlock.isInvalid : false;
+      return this.$v.item.$invalid || this.$v.image.$invalid || isPricesInvalid;
     },
   },
 
@@ -164,15 +170,6 @@ export default {
     },
 
     async saveItem() {
-      this.$v.$touch();
-      let isPricesValid = true;
-      if (this.$refs.pricesBlock) {
-        isPricesValid = this.$refs.pricesBlock.checkIsValid();
-      }
-      if (this.$v.$invalid || !isPricesValid) {
-        this.$showErrorMessage('The form is not filled right');
-        return;
-      }
       this.setIsLoading(true);
       const data = {
         ...this.item,
@@ -196,6 +193,9 @@ export default {
 
     handleSkuFieldInput: debounce(
       async function handleSkuFieldInput(value) {
+        if (!value) {
+          return;
+        }
         this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
         this.$v.item.sku.$touch();
       },
@@ -246,6 +246,7 @@ export default {
           v-model="item.name"
           label="Item name"
           v-bind="$getValidatedEachFieldProps('item.name', Object.keys(item.name))"
+          @blur="$v.item.name.$each.$touch()"
         />
         <UiLangTextField
           :langs="project.localizations"
@@ -253,6 +254,7 @@ export default {
           v-model="item.description"
           label="Short description"
           v-bind="$getValidatedEachFieldProps('item.description', Object.keys(item.description))"
+          @blur="$v.item.description.$each.$touch()"
         />
         <UiLangTextField
           :langs="project.localizations"
@@ -262,6 +264,7 @@ export default {
           v-bind="$getValidatedEachFieldProps(
           'item.long_description',
            Object.keys(item.long_description))"
+          @blur="$v.item.long_description.$each.$touch()"
         />
 
         <p class="text">
@@ -271,8 +274,10 @@ export default {
           :disabled="!isNewItem || viewOnly"
           label="SKU"
           v-model="item.sku"
+          v-bind="$getValidatedFieldProps('item.sku')"
           @input="handleSkuFieldInput"
-          v-bind="$getValidatedFieldProps('item.sku')"/>
+          @blur="$v.item.sku.$touch()"
+        />
       </section>
       <section class="section">
         <UiHeader
@@ -309,6 +314,8 @@ export default {
           :defaultCurrency="defaultCurrency"
           :disabled="viewOnly"
           v-model="item.prices"
+          @hook:mounted="isPricesBlockPresent = true"
+          @hook:destroyed="isPricesBlockPresent = false"
         />
         <UiTextField
           v-else
@@ -318,13 +325,14 @@ export default {
           :disabled="viewOnly"
           v-model="virtualCurrencyPrice"
           v-bind="$getValidatedFieldProps('virtualCurrencyPrice')"
+          @blur="$v.virtualCurrencyPrice.$touch()"
         />
       </section>
 
       <div class="controls" v-if="!viewOnly">
         <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
         <UiButton
-          :disabled="$v.item.$invalid || $v.image.$invalid"
+          :disabled="isSaveButtonDisabled"
           class="submit-button"
           @click="saveItem"
           text="SAVE"

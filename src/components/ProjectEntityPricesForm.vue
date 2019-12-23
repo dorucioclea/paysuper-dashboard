@@ -83,6 +83,10 @@ export default {
         },
       ];
     },
+
+    isInvalid() {
+      return this.$v.$invalid;
+    },
   },
 
   watch: {
@@ -169,11 +173,6 @@ export default {
       await this.fillPrice(amount, 'steam');
       closeSuggest();
     },
-
-    checkIsValid() {
-      this.$v.$touch();
-      return !this.$v.$invalid;
-    },
   },
 };
 </script>
@@ -194,6 +193,7 @@ export default {
       v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
       @suggestClosed="isSteamSuggestOpened = false"
       @input="updatePrice"
+      @blur="$v.priceData[index].amount.$touch()"
     >
       <template v-slot:suggest="{ closeSuggest }" v-if="isDefault(price)">
         <div>
@@ -229,6 +229,7 @@ export default {
         v-model="price.amount"
         v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
         @input="updatePrice"
+        @blur="$v.priceData[index].amount.$touch()"
       >
         <span slot="label">
           <IconQuestionInCircle class="field-label-icon" />

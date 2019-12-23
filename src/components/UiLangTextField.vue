@@ -109,6 +109,8 @@ export default {
       :value="selectedValue"
       :label="`${label} (${selectedLang.toUpperCase()})`"
       @input="updateValue"
+      @blur="$emit('blur')"
+      @focus="$emit('focus')"
     />
     <UiLangsBar
       :list="langs"
