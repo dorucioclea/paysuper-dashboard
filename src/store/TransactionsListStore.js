@@ -103,7 +103,7 @@ export default function createTransactionsListStore() {
         const data = {
           reason,
           creator_id: rootState.User.Merchant.merchant.id,
-          amount: transaction.total_payment_amount,
+          amount: transaction.order_charge.amount,
         };
         return axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`,
