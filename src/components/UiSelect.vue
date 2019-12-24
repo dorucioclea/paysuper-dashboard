@@ -320,6 +320,10 @@ $left-indent: 12px;
     top: 38px;
     border: 5px solid transparent;
     border-top: 5px solid $focus-input-color;
+
+    .select-field._disabled & {
+      border-top-color: #c6cacc;
+    }
   }
 }
 .selected {
