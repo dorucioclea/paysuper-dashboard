@@ -196,6 +196,15 @@ export default {
                 {{ $formatPrice(transaction.total_payment_amount, transaction.currency) }}
               </div>
             </div>
+            <div class="details__item">
+              <div class="details__item--label">Total charge summ</div>
+              <div class="details__item--info">
+                {{ $formatPrice(
+                  transaction.order_charge.amount,
+                  transaction.order_charge.currency
+                ) }}
+              </div>
+            </div>
             <div class="details__item" v-if="hasCurrency(transaction.gross_revenue)">
               <div class="details__item--label">Gross revenue</div>
               <div class="details__item--info">

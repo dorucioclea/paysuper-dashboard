@@ -322,7 +322,7 @@ export default {
             <UiTableCell align="left">{{ transaction.payment_method.title }}</UiTableCell>
             <UiTableCell align="left">{{ transaction.transaction }}</UiTableCell>
             <UiTableCell align="left" :class="`status-${transaction.status}`">
-              {{$formatPrice(transaction.total_payment_amount, transaction.currency)}}
+              {{ $formatPrice(transaction.order_charge.amount, transaction.order_charge.currency) }}
             </UiTableCell>
             <UiTableCell align="left" v-if="userPermissions.cancelTransactions">
               <div
