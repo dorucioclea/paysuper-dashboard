@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added the `vat_payer` option to the Project's settings.
 
 ### Changed
-- Updated `404 not found` page. You can play a fun mini-game on this page if desired.
+- Updated `404 not found` page. You can play a fun game on this page if desired.
 
 ### Fixed
 - Some fixes for the tariff scale.
