@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { required, maxLength } from 'vuelidate/lib/validators';
-import { find, cloneDeep, debounce } from 'lodash-es';
+import { find, cloneDeep } from 'lodash-es';
 import { OpenFileDialog } from '@/helpers/uploader';
 import ProjectKeyProductStore from '@/store/ProjectKeyProductStore';
 import ProjectPlatformsPricesForm from '@/components/ProjectPlatformsPricesForm.vue';
@@ -221,16 +221,9 @@ export default {
       this.setIsLoading(false);
     },
 
-    handleSkuFieldInput: debounce(
-      async function handleSkuFieldInput(value) {
-        if (!value) {
-          return;
-        }
-        this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
-        this.$v.keyProductLocal.sku.$touch();
-      },
-      200,
-    ),
+    async validateSkuValue(value) {
+      this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage) || false;
+    },
   },
 };
 </script>
@@ -291,8 +284,7 @@ export default {
         v-bind="$getValidatedFieldProps('keyProductLocal.sku')"
         v-model="keyProductLocal.sku"
         :disabled="(keyProductId && !!keyProductLocal.sku) || viewOnly"
-        @input="handleSkuFieldInput"
-        @blur="$v.keyProductLocal.sku.$touch()"
+        @blur="$v.keyProductLocal.sku.$touch(), validateSkuValue(keyProductLocal.sku)"
       />
     </section>
 

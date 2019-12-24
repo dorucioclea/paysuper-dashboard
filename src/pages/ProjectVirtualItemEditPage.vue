@@ -1,9 +1,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { required, maxLength } from 'vuelidate/lib/validators';
-import {
-  debounce, get, cloneDeep, find,
-} from 'lodash-es';
+import { get, cloneDeep, find } from 'lodash-es';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
 import ProjectEntityPricesForm from '@/components/ProjectEntityPricesForm.vue';
 import updateLangFields from '@/helpers/updateLangFields';
@@ -191,16 +189,9 @@ export default {
       this.setIsLoading(false);
     },
 
-    handleSkuFieldInput: debounce(
-      async function handleSkuFieldInput(value) {
-        if (!value) {
-          return;
-        }
-        this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
-        this.$v.item.sku.$touch();
-      },
-      200,
-    ),
+    async validateSkuValue(value) {
+      this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage) || false;
+    },
 
     checkIsBillingTypeDisabled(type) {
       const isVirtualCurrencyAvailable = Boolean(
@@ -275,8 +266,7 @@ export default {
           label="SKU"
           v-model="item.sku"
           v-bind="$getValidatedFieldProps('item.sku')"
-          @input="handleSkuFieldInput"
-          @blur="$v.item.sku.$touch()"
+          @blur="$v.item.sku.$touch(), validateSkuValue(item.sku)"
         />
       </section>
       <section class="section">

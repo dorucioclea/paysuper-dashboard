@@ -1,6 +1,8 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { required, minValue, maxValue } from 'vuelidate/lib/validators';
+import {
+  required, minValue, maxValue, maxLength,
+} from 'vuelidate/lib/validators';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
 import ProjectEntityPricesForm from '@/components/ProjectEntityPricesForm.vue';
@@ -54,6 +56,10 @@ export default {
     viewOnly() {
       return !this.userPermissions.editProjects;
     },
+
+    isSaveButtonDisabled() {
+      return this.$v.virtualCurrency.$invalid || this.$refs.pricesBlock.isInvalid;
+    },
   },
 
   validations() {
@@ -61,6 +67,7 @@ export default {
       name: {
         $each: {
           required,
+          maxLength: maxLength(50),
         },
       },
       logo: {
@@ -158,6 +165,7 @@ export default {
         v-bind="$getValidatedEachFieldProps(
         'virtualCurrency.name',
          Object.keys(virtualCurrency.name))"
+        @blur="$v.virtualCurrency.name.$each.$touch()"
       />
       <UiLangTextField
         label="Custom message on successful payment"
@@ -234,7 +242,7 @@ export default {
 
     <div class="controls" v-if="!viewOnly">
       <UiButton
-        :disabled="$v.virtualCurrency.$invalid"
+        :disabled="isSaveButtonDisabled"
         class="submit-button"
         @click="handleSave"
         text="SAVE"
