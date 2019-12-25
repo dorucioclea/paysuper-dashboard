@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues) 
-[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
+[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=develop)](https://travis-ci.org/paysuper/paysuper-dashboard)
 
 The PaySuper Dashboard is  designed as a management tool for a merchant. In this repo you may find the BFF server and VUE based frontend to interact with REST API ([Management API](https://github.com/paysuper/paysuper-management-api)) as administrative dashboard. Settings, management of [Projects and Products](https://docs.pay.super.com/docs/payments/quick-start), reporting is localed in PaySuper Dashboard.
 
