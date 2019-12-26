@@ -222,7 +222,6 @@ export default {
       } catch (error) {
         this.$showErrorMessage(error);
       }
-      this.filterTransactions();
       this.setIsLoading(false);
       this.showRefundModal = false;
     },
@@ -299,8 +298,8 @@ export default {
           </UiTableRow>
           <UiTableRow
             class="transaction"
-            v-for="(transaction, index) in transactionsList.items"
-            :key="index"
+            v-for="transaction in transactionsList.items"
+            :key="transaction.uuid"
             :link="`/transactions/${transaction.uuid}`"
           >
             <UiTableCell align="left" class="status">

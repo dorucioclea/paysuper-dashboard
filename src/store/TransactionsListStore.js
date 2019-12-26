@@ -103,14 +103,20 @@ export default function createTransactionsListStore() {
           creator_id: rootState.User.Merchant.merchant.id,
           amount: transaction.order_charge.amount,
         };
+
         const response = await axios.post(
           `{apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`,
           data,
         );
+
         if (response.data) {
           const items = [...state.transactionsList.items];
           const transactionIndex = findKey(items, { uuid: transaction.uuid });
-          items[transactionIndex] = { ...transaction, refund_allowed: false };
+          items[transactionIndex] = {
+            ...transaction,
+            refund_allowed: false,
+            status: 'refunded',
+          };
 
           commit('transactionsList', {
             count: state.transactionsList.count,
