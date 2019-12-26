@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { findKey, get } from 'lodash-es';
 import qs from 'qs';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectTransactionsScheme from '@/schemes/projectTransactionsScheme';
@@ -7,7 +8,7 @@ const searchBuilder = new SearchBuilder(projectTransactionsScheme);
 
 export default function createTransactionsListStore() {
   return {
-    state: () => ({
+    state: {
       transactionsList: {
         items: [],
         count: 0,
@@ -15,8 +16,7 @@ export default function createTransactionsListStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
-      currentItem: {},
-    }),
+    },
 
     getters: {
       getFilterValues(state) {
@@ -64,10 +64,8 @@ export default function createTransactionsListStore() {
         const url = `${rootState.config.apiUrl}/admin/api/v1/order?${query}&sort[]=-created_at`;
 
         const response = await axios.get(url);
-        const transactionsList = {
-          ...response.data,
-          items: response.data.items || [],
-        };
+        const transactionsList = get(response, 'data', { items: [], count: 0 });
+
         // append mode for infinite scroll
         if (state.apiQuery.offset > 0 && transactionsList.count === state.transactionsList.count) {
           transactionsList.items = [
@@ -99,16 +97,28 @@ export default function createTransactionsListStore() {
         commit('query', query);
       },
 
-      refund({ rootState }, { transaction, reason }) {
+      async refund({ rootState, commit, state }, { transaction, reason }) {
         const data = {
           reason,
           creator_id: rootState.User.Merchant.merchant.id,
           amount: transaction.order_charge.amount,
         };
-        return axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`,
+        const response = await axios.post(
+          `{apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`,
           data,
         );
+        if (response.data) {
+          const items = [...state.transactionsList.items];
+          const transactionIndex = findKey(items, { uuid: transaction.uuid });
+          items[transactionIndex] = { ...transaction, refund_allowed: false };
+
+          commit('transactionsList', {
+            count: state.transactionsList.count,
+            items,
+          });
+        }
+
+        return response;
       },
     },
 

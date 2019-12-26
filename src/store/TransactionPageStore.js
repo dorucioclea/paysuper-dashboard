@@ -11,7 +11,7 @@ export default function createTransactionPageStore() {
       transactionId(state, data) {
         state.transactionId = data;
       },
-      setTransaction(state, data) {
+      transaction(state, data) {
         state.transaction = data;
       },
     },
@@ -19,26 +19,29 @@ export default function createTransactionPageStore() {
     actions: {
       async initState({ dispatch, commit }, { transactionId }) {
         commit('transactionId', transactionId);
-        await dispatch('fetchTransactionData', transactionId);
+        await dispatch('fetchTransactionData');
       },
 
-      async fetchTransactionData({ commit, rootState }, id) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/order/${id}`);
-        commit('setTransaction', response.data);
+      async fetchTransactionData({ commit, state }) {
+        const response = await axios.get(`{apiUrl}/admin/api/v1/order/${state.transactionId}`);
+        commit('transaction', response.data);
       },
 
-      async refund({ rootState, commit }, { transaction, reason }) {
+      async refund({ rootState, commit, state }, { reason }) {
         const data = {
           reason,
           creator_id: rootState.User.Merchant.merchant.id,
-          amount: transaction.order_charge.amount,
+          amount: state.transaction.order_charge.amount,
         };
         const response = await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`,
+          `{apiUrl}/admin/api/v1/order/${state.transactionId}/refunds`,
           data,
         );
         if (response.data) {
-          commit('refund', { items: response.data });
+          commit('transaction', {
+            ...state.transaction,
+            refund_allowed: false,
+          });
         }
       },
     },

@@ -216,11 +216,12 @@ export default {
 
     async handleRefund(reason) {
       this.setIsLoading(true);
-      await this.refund({ transaction: this.currentTransaction, reason })
-        .then(() => {
-          this.$showSuccessMessage('Refund created');
-        })
-        .catch(this.$showErrorMessage);
+      try {
+        await this.refund({ transaction: this.currentTransaction, reason });
+        this.$showSuccessMessage('Refund created');
+      } catch (error) {
+        this.$showErrorMessage(error);
+      }
       this.filterTransactions();
       this.setIsLoading(false);
       this.showRefundModal = false;

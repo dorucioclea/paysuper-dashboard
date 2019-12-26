@@ -95,7 +95,12 @@ export default {
 
     async handleRefund(reason) {
       this.setIsLoading(true);
-      await this.refund({ transaction: this.transaction, reason }).catch(this.$showErrorMessage);
+      try {
+        await this.refund({ reason });
+        this.$showSuccessMessage('Refund created');
+      } catch (error) {
+        this.$showErrorMessage(error);
+      }
       this.setIsLoading(false);
       this.$navigate('/transactions/');
     },
