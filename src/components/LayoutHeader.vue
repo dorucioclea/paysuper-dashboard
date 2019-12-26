@@ -1,6 +1,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
+import { get } from 'lodash-es';
 import UserNotifications from '@/components/UserNotifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
 import NotificationsMixin from '@/mixins/Notifications';
@@ -64,11 +65,15 @@ export default {
   },
   computed: {
     ...mapGetters('User', ['userPermissions']),
-    ...mapState('User/Merchant', ['merchantStatus']),
+    ...mapState('User/Merchant', ['merchantStatus', 'onboardingSteps']),
     ...mapState('User/Notifications', ['notifications']),
 
     status() {
       return this.merchantStatus === 'life' ? 'active' : 'test';
+    },
+
+    hasCompanyInfo() {
+      return get(this.onboardingSteps, 'company', false);
     },
 
     newNotificationsCount() {
@@ -96,7 +101,7 @@ export default {
           url: '/settings/user-roles/',
           icon: 'IconUsers',
           text: 'User roles',
-          active: this.userPermissions.inviteProjectUsers,
+          active: this.userPermissions.inviteProjectUsers && this.hasCompanyInfo,
         },
         {
           id: 'logout',

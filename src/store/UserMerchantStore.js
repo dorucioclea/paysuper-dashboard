@@ -9,13 +9,6 @@ import {
 import axios from 'axios';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
-// const merchantStatues = {
-//   draft: 0,
-//   agreementRequested: 1,
-//   onReview: 2,
-//   agreementSigning: 3,
-//   agreementSigned: 4,
-// };
 const merchantAgreementTypes = {
   undefined: 0,
   paper: 1,
@@ -97,7 +90,7 @@ function getDefaultAgreementDocument() {
 
 export default function createMerchantStore() {
   return {
-    state: () => ({
+    state: {
       merchant: null,
       merchantOriginalCopy: null,
       onboardingCompleteStepsCount: 0,
@@ -113,7 +106,7 @@ export default function createMerchantStore() {
       paymentMethods: [],
       paymentMethodsSort: [],
       agreementDocument: getDefaultAgreementDocument(),
-    }),
+    },
 
     getters: {
       hasProjects(state) {
@@ -170,18 +163,15 @@ export default function createMerchantStore() {
         await dispatch('fetchMerchantStatus');
       },
 
-      async fetchMerchantStatus({
-        state, commit, rootState, rootGetters,
-      }) {
+      async fetchMerchantStatus({ state, commit }) {
         let result = {};
-        if (state.merchant.id && rootGetters['User/userPermissions'].viewDashboard) {
-          const response = await axios.get(
-            `${rootState.config.apiUrl}/admin/api/v1/merchants/status`,
-          ).catch((error) => {
-            console.error(error);
-            // A fallback if something REALLY gone wrong. Not useful in normal flow
-            return { data: {} };
-          });
+        if (state.merchant.id) {
+          const response = await axios.get('{apiUrl}/admin/api/v1/merchants/status')
+            .catch((error) => {
+              console.error(error);
+              // A fallback if something REALLY gone wrong. Not useful in normal flow
+              return { data: {} };
+            });
           result = response.data;
         }
 
@@ -281,9 +271,9 @@ export default function createMerchantStore() {
         }
       },
 
-      async changeMerchantStatus({ commit, rootState }, { status, message = '' }) {
+      async changeMerchantStatus({ commit }, { status, message = '' }) {
         const response = await axios.put(
-          `${rootState.config.apiUrl}/system/api/v1/merchants/change-status`,
+          '{apiUrl}/system/api/v1/merchants/change-status',
           { status, message },
         ).catch(console.warn);
 
@@ -295,16 +285,14 @@ export default function createMerchantStore() {
         return false;
       },
 
-      async fetchAgreement({ state, commit, rootState }) {
+      async fetchAgreement({ state, commit }) {
         if (state.merchant.status < 3) {
           commit('agreementDocument', getDefaultAgreementDocument());
           return;
         }
 
         try {
-          const response = await axios.get(
-            `${rootState.config.apiUrl}/admin/api/v1/merchants/agreement`,
-          );
+          const response = await axios.get('{apiUrl}/admin/api/v1/merchants/agreement');
 
           commit('agreementDocument', response.data);
         } catch (error) {
@@ -312,9 +300,9 @@ export default function createMerchantStore() {
         }
       },
 
-      async sendNotification({ rootState }, notification) {
+      async sendNotification(store, notification) {
         const response = await axios.post(
-          `${rootState.config.apiUrl}/system/api/v1/merchants/notifications`,
+          '{apiUrl}/system/api/v1/merchants/notifications',
           notification,
         );
 
