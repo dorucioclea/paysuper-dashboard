@@ -64,7 +64,9 @@ export default function createTransactionsListStore() {
         const url = `${rootState.config.apiUrl}/admin/api/v1/order?${query}&sort[]=-created_at`;
 
         const response = await axios.get(url);
-        const transactionsList = get(response, 'data', { items: [], count: 0 });
+        const items = get(response, 'data.items') || [];
+        const count = get(response, 'data.count') || 0;
+        const transactionsList = { items, count };
 
         // append mode for infinite scroll
         if (state.apiQuery.offset > 0 && transactionsList.count === state.transactionsList.count) {
