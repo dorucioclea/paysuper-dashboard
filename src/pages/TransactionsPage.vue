@@ -216,11 +216,7 @@ export default {
       } catch (error) {
         this.$showErrorMessage(error);
       }
-<<<<<<< HEAD
       this.setIsLoading(false);
-=======
-      this.filterTransactions();
->>>>>>> 193525 test mark for transactions + new UiCompositeFilter
       this.showRefundModal = false;
     },
 
