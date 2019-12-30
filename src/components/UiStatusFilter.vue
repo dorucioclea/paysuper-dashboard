@@ -18,10 +18,6 @@ export default {
       type: Object,
       required: true,
     },
-    multilevel: {
-      type: Boolean,
-      default: false,
-    },
     countsByStatus: {
       type: Object,
       default: null,
@@ -220,7 +216,7 @@ export default {
     color: #3d7bf5;
 
     .triangle {
-      border-color: transparent transparent transparent #3D7BF5;
+      border-color: transparent transparent transparent #3d7bf5;
     }
   }
 
@@ -248,7 +244,7 @@ export default {
   }
   &._grey {
     &::before {
-      background: #C6CACC;
+      background: #c6cacc;
     }
   }
   &._gray {
@@ -311,7 +307,7 @@ export default {
   right: 30px;
   top: 6px;
   color: #fff;
-  background: #3D7BF5;
+  background: #3d7bf5;
   font-size: 9px;
 }
 
@@ -323,7 +319,7 @@ export default {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 4.0px 0 4.0px 4.0px;
-  border-color: transparent transparent transparent rgb(0,0,0);
+  border-width: 4px 0 4px 4px;
+  border-color: transparent transparent transparent rgb(0, 0, 0);
 }
 </style>

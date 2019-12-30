@@ -3,7 +3,8 @@
   <label class="wrapper">
     <div class="checkbox">
       <input
-        v-bind="{ checked, disabled }"
+        :checked="checked"
+        :disabled="disabled || readonly"
         class="input"
         type="checkbox"
         @change="emitChange"
@@ -44,6 +45,10 @@ export default {
       type: Boolean,
     },
     disabled: {
+      default: false,
+      type: Boolean,
+    },
+    readonly: {
       default: false,
       type: Boolean,
     },

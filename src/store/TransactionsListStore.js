@@ -2,9 +2,9 @@ import axios from 'axios';
 import { findKey, get } from 'lodash-es';
 import qs from 'qs';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
-import projectTransactionsScheme from '@/schemes/projectTransactionsScheme';
+import transactionsListScheme from '@/schemes/transactionsListScheme';
 
-const searchBuilder = new SearchBuilder(projectTransactionsScheme);
+const searchBuilder = new SearchBuilder(transactionsListScheme);
 
 export default function createTransactionsListStore() {
   return {
