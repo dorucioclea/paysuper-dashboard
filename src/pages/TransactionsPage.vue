@@ -4,9 +4,9 @@ import {
 } from 'vuex';
 import { format } from 'date-fns';
 import {
-  debounce, isEqual, get, find, remove,
+  isEqual, get, find, remove,
 } from 'lodash-es';
-import transactionsStatusScheme from '@/schemes/transactionsStatusScheme';
+import transactionsListCompositeFilterScheme from '@/schemes/transactionsListCompositeFilterScheme';
 import PictureTabletWithChart from '@/components/PictureTabletWithChart.vue';
 import TransactionsListStore from '@/store/TransactionsListStore';
 import NoResults from '@/components/NoResults.vue';
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       filters: {},
-      scheme: transactionsStatusScheme,
+      scheme: transactionsListCompositeFilterScheme,
       filterCounts: {},
       showRefundModal: false,
       currentTransaction: null,
@@ -59,12 +59,6 @@ export default {
     ...mapGetters('Transactions', ['getFilterValues']),
     ...mapGetters('Dictionaries', ['countries']),
     ...mapGetters('User', ['userPermissions']),
-
-    handleQuickSearchInput() {
-      return debounce(() => {
-        this.filterTransactions();
-      }, 500);
-    },
 
     dateFilter: {
       get() {
@@ -117,12 +111,13 @@ export default {
         'status',
         'dateFrom',
         'dateTo',
+        'hideTest',
       ]);
     },
 
-    filterTransactions() {
+    async filterTransactions() {
       this.filters.offset = 0;
-      this.searchItems();
+      await this.searchItems();
     },
 
     async searchItems() {
@@ -185,24 +180,23 @@ export default {
       return STATUS_COLOR[status];
     },
 
-    handleStatusInput(data) {
-      if (data === 'all') {
+    handleStatusChange({ filter, value }) {
+      if (filter === 'clear') {
         this.filters.status = [];
         this.filters.dateFrom = null;
         this.filters.dateTo = null;
-        this.filterTransactions();
+        this.filters.hideTest = '';
+      } else if (filter === 'status') {
+        if (value === 'all') {
+          this.filters.status = [];
+        } else if (this.filters[filter].includes(value)) {
+          remove(this.filters[filter], n => n === (value));
+        } else {
+          this.filters[filter].push(value);
+        }
+      } else if (filter === 'hideTest') {
+        this.filters.hideTest = this.filters.hideTest ? '' : 'true';
       }
-    },
-
-    handleFilterInput(data) {
-      if (data.value === 'all') {
-        this.filters[data.filter] = [];
-      } else if (this.filters[data.filter].includes(data.value)) {
-        remove(this.filters[data.filter], n => n === (data.value));
-      } else {
-        this.filters[data.filter].push(data.value);
-      }
-
       this.fillCounts();
       this.filterTransactions();
     },
@@ -222,7 +216,11 @@ export default {
       } catch (error) {
         this.$showErrorMessage(error);
       }
+<<<<<<< HEAD
       this.setIsLoading(false);
+=======
+      this.filterTransactions();
+>>>>>>> 193525 test mark for transactions + new UiCompositeFilter
       this.showRefundModal = false;
     },
 
@@ -265,12 +263,12 @@ export default {
             v-model="dateFilter"
             @input="filterTransactions"
           />
-          <UiStatusFilter
-            :value="filters"
+          <UiCompositeFilter
+            class="status-filter"
+            :filters="filters"
             :scheme="scheme"
-            :countsByStatus="filterCounts"
-            @input="handleStatusInput"
-            @inputSecondLevel="handleFilterInput"
+            :countsByFilter="filterCounts"
+            @change="handleStatusChange"
           />
         </div>
 
@@ -299,6 +297,7 @@ export default {
           <UiTableRow
             class="transaction"
             v-for="transaction in transactionsList.items"
+            :class="{ '_test': !transaction.is_production }"
             :key="transaction.uuid"
             :link="`/transactions/${transaction.uuid}`"
           >
@@ -320,7 +319,12 @@ export default {
               <div>{{ getCountryByCode(transaction.country_code) }}</div>
             </UiTableCell>
             <UiTableCell align="left">{{ transaction.payment_method.title }}</UiTableCell>
-            <UiTableCell align="left">{{ transaction.transaction }}</UiTableCell>
+            <UiTableCell align="left">
+              <div class="transaction__id">
+                <span class="transaction__id-test" v-if="!transaction.is_production">TEST</span>
+                {{ transaction.transaction || '—'}}
+              </div>
+            </UiTableCell>
             <UiTableCell align="left" :class="`status-${transaction.status}`">
               {{ $formatPrice(transaction.order_charge.amount, transaction.order_charge.currency) }}
             </UiTableCell>
@@ -380,6 +384,12 @@ export default {
   margin-top: 32px;
 }
 
+.transaction {
+  &._test {
+    background: #f7f9fa;
+  }
+}
+
 .country-name > div {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -394,8 +404,26 @@ export default {
     cursor: pointer;
   }
 
+  &__id {
+    position: relative;
+
+    &-test {
+      position: absolute;
+      font-weight: 500;
+      font-size: 8px;
+      line-height: 14px;
+      letter-spacing: 0.1em;
+      top: -9px;
+
+      .transaction._test:not(:hover) & {
+        color: #919699;
+      }
+    }
+  }
+
   &__refund {
     position: relative;
+
     &-tip {
       display: none;
       height: 39px;

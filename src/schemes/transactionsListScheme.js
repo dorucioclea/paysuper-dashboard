@@ -31,6 +31,11 @@ const filters = {
     defaultValue: null,
     apiQueryName: 'pm_date_to',
   },
+
+  hideTest: {
+    defaultValue: null,
+    apiQueryName: 'hide_test',
+  },
 };
 
 export default {
