@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import {
-  get, find, isEmpty,
+  get, find, isEmpty, upperFirst,
 } from 'lodash-es';
 import { format } from 'date-fns';
 import TransactionPageStore from '@/store/TransactionPageStore';
@@ -111,6 +111,10 @@ export default {
       }
       return value.currency !== '';
     },
+
+    getTagName(name) {
+      return upperFirst(name);
+    },
   },
 };
 </script>
@@ -122,7 +126,20 @@ export default {
         Transaction {{ transaction.transaction }}
       </template>
       <span slot="description">
-        <UiLabelTag :color="colors[transaction.status]">{{ transaction.status }}</UiLabelTag>
+        <UiLabelTag
+          class="tag"
+          :color="colors[transaction.status]"
+        >
+          {{ getTagName(transaction.status) }}
+        </UiLabelTag>
+        <UiLabelTag
+          v-if="!transaction.is_production"
+          class="tag"
+          color="light-gray"
+        >
+          Test
+        </UiLabelTag>
+
       </span>
       <UiButton
         v-if="refundAvailable"
@@ -471,6 +488,12 @@ export default {
 <style lang="scss" scoped>
 .transaction-page-header {
   position: relative;
+}
+
+.tag {
+  & + & {
+    margin-left: 4px;
+  }
 }
 
 .refund-button {
