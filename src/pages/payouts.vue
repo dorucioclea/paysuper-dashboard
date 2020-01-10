@@ -278,7 +278,7 @@ export default {
             </UiTableCell>
             <UiTableCell align="left">{{ payout.id }}</UiTableCell>
             <UiTableCell align="left">
-              <template v-if="payout.paid_at < 0">
+              <template v-if="payout.paid_at">
                 {{ format(payout.paid_at.seconds * 1000, 'dd.MM.yyyy') }}
               </template>
               <template v-else>&mdash;</template>
