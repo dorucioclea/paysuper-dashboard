@@ -12,7 +12,7 @@ function $navigate(pathOrOptions, query = {}) {
 }
 
 function $formatPrice(value, currency) {
-  if (!value) {
+  if (value === null || value === undefined) {
     return '';
   }
   return new Intl.NumberFormat(
