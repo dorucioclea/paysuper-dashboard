@@ -95,7 +95,7 @@ export default function createLicenseAgreementStore() {
         if (hasDocument) {
           saveAs(
             new Blob([state.document], { type: `application/${extension}` }),
-            `License Agreement.${extension}`,
+            state.agreement.metadata.name,
           );
         }
       },
