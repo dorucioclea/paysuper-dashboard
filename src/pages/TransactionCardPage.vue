@@ -219,7 +219,7 @@ export default {
               </div>
             </div>
             <div class="details__item">
-              <div class="details__item--label">Total charge summ</div>
+              <div class="details__item--label">Total charge sum</div>
               <div class="details__item--info">
                 {{ $formatPrice(
                   transaction.order_charge.amount,

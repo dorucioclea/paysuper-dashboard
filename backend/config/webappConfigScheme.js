@@ -5,7 +5,8 @@ module.exports = {
   },
   apiUrl: {
     name: 'VUE_APP_P1PAYAPI_URL',
-    default: 'https://p1payapi.tst.protocol.one',
+    // default: 'https://p1payapi.tst.protocol.one',
+    default: 'https://190525-p1payapi.tst.protocol.one',
   },
   supportMail: {
     name: 'SUPPORT_MAIL',

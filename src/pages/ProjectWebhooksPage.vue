@@ -1,34 +1,69 @@
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { cloneDeep } from 'lodash-es';
 import {
-  required, minLength, maxLength, url,
+  required,
+  minLength,
+  maxLength,
+  url,
 } from 'vuelidate/lib/validators';
-import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
+import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
+import WebhookMethodGameKeys from '@/components/WebhookMethodGameKeys.vue';
+import WebhookMethodSimpleCheckout from '@/components/WebhookMethodSimpleCheckout.vue';
+import WebhookMethodVirtualCurrency from '@/components/WebhookMethodVirtualCurrency.vue';
+import WebhookMethodVirtualItems from '@/components/WebhookMethodVirtualItems.vue';
+import WebhookTestResult from '@/components/WebhookTestResult.vue';
+import WebhookTestStore from '@/store/WebhookTestStore';
 
 export default {
   name: 'ProjectWebhooksPage',
 
   components: {
-    PictureDotsAndSquaresScheme,
     KeyGenerateField,
+    PictureDotsAndSquaresScheme,
+    WebhookMethodGameKeys,
+    WebhookMethodSimpleCheckout,
+    WebhookMethodVirtualCurrency,
+    WebhookMethodVirtualItems,
+    WebhookTestResult,
+  },
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('WebhookTest', WebhookTestStore, route.params.id);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
 
   data() {
     return {
-      projectLocal: null,
+      projectLocal: {},
+      modes: [
+        { label: 'Default', value: 'default' },
+        { label: 'Pre-approval', value: 'pre_approval' },
+      ],
+      tabs: [
+        { label: 'Simple checkout', value: 'simple' },
+        { label: 'Virtual currency', value: 'virtual_currency' },
+        { label: 'Virtual items', value: 'virtual_items' },
+        { label: 'Game keys', value: 'keys' },
+      ],
+      currentTabIndex: 0,
+      tabsComponents: {
+        simple: WebhookMethodSimpleCheckout,
+        virtual_currency: WebhookMethodVirtualCurrency,
+        virtual_items: WebhookMethodVirtualItems,
+        keys: WebhookMethodGameKeys,
+      },
     };
   },
 
   computed: {
     ...mapState('Project', ['project']),
     ...mapState('User/Merchant', ['merchant']),
-    ...mapGetters('User', ['userPermissions']),
-
-    viewOnly() {
-      return !this.userPermissions.editProjects;
-    },
+    ...mapState('WebhookTest', ['projectId', 'results']),
 
     isWebhooksEnabled: {
       get() {
@@ -65,13 +100,21 @@ export default {
 
   created() {
     this.updateProjectLocal();
+
+    const webhookMode = this.projectLocal.webhook_mode || 'default';
+    this.projectLocal.webhook_mode = webhookMode;
   },
 
   methods: {
+    ...mapActions('WebhookTest', ['sendTestWebhook']),
+
+    async handleTest(data) {
+      await this.sendTestWebhook(data);
+    },
     updateProjectLocal() {
       this.projectLocal = cloneDeep(this.project);
     },
-    handleSave() {
+    saveProject() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.$emit('save', this.projectLocal);
@@ -125,18 +168,49 @@ export default {
         :hasMargin="true"
         level="3"
       >
-        Functional URL
+        Functional URL`s
       </UiHeader>
       <UiText indentBottom="small">
-        Specify correct URL to get webhook notifications.
+        Specify correct URL`s to get webhook notifications and check user account.
       </UiText>
       <UiTextField
-        label="Webhook URL"
-        :autocompleteUrlProtocol="true"
-        :disabled="viewOnly"
         v-model="projectLocal.url_process_payment"
         v-bind="$getValidatedFieldProps('projectLocal.url_process_payment')"
+        label="Proccess payment URL"
+        :autocompleteUrlProtocol="true"
       />
+      <UiTextField
+        v-model="projectLocal.url_check_account"
+        v-bind="$getValidatedFieldProps('projectLocal.url_check_account')"
+        label="Check account URL"
+        :autocompleteUrlProtocol="true"
+      />
+    </div>
+
+    <div class="section">
+      <UiHeader
+        :hasMargin="true"
+        level="3"
+      >
+        Webhook mode
+      </UiHeader>
+
+      <UiText indentBottom="small">
+        Select <strong>Default</strong> for webhook notifications in you need
+        asynchronous notifications and <strong>Pre-approval</strong> if you want
+        to validate payment in synchronious mode. In <strong>Pre-approval</strong> mode you
+        must implement endpoint for <strong>user.validate</strong> callback.
+      </UiText>
+
+      <UiRadio
+        v-for="option in modes"
+        :matchValue="projectLocal.webhook_mode"
+        :key="option.value"
+        :value="option.value"
+        @change="projectLocal = { ...projectLocal, webhook_mode: $event }"
+      >
+        {{ option.label }}
+      </UiRadio>
     </div>
 
     <div class="section">
@@ -148,28 +222,52 @@ export default {
       </UiHeader>
       <UiText indentBottom="small">
         Generate a secret key to set up correct integration with
-        PaySuper platform.
+        Pay Super platform.
       </UiText>
 
       <KeyGenerateField
-        label="Secret key"
-        :disabled="viewOnly"
         v-model="projectLocal.secret_key"
         v-bind="$getValidatedFieldProps('projectLocal.secret_key')"
+        label="Secret key"
       />
     </div>
 
-    <div class="controls" v-if="!viewOnly">
+    <div class="controls">
       <UiSwitchBox v-model="isWebhooksEnabled">
         Enable webhooks
       </UiSwitchBox>
       <UiButton
         class="submit-button"
         text="SAVE"
-        @click="handleSave"
+        @click="saveProject"
       />
     </div>
   </UiPanel>
+
+  <template v-if="project.url_process_payment">
+    <UiPanel>
+      <UiTabs
+        v-model="currentTabIndex"
+        :items="tabs"
+      />
+      <div class="tab-content">
+        <KeepAlive>
+          <component
+            :is="tabsComponents[tabs[currentTabIndex].value]"
+            @input="handleTest"
+          />
+        </KeepAlive>
+      </div>
+    </UiPanel>
+
+    <UiPanel v-if="results">
+      <WebhookTestResult
+        v-for="(result, index) in results"
+        :key="index"
+        :result="result"
+      />
+    </UiPanel>
+  </template>
 </div>
 </template>
 
@@ -211,13 +309,14 @@ export default {
 .section {
   margin-bottom: 32px;
 }
-
+.tab-content {
+  margin-top: 32px;
+}
 .controls {
   display: flex;
   justify-content: flex-end;
   margin-top: 30px;
 }
-
 .submit-button {
   width: 140px;
   margin-left: 32px;
